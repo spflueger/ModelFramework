@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 
+project(ModelFramework)
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall")
 
 set(INCLUDE_DIRECTORIES
@@ -23,3 +25,15 @@ file(GLOB_RECURSE SRCS ./*.cxx)
 add_library(Model SHARED ${SRCS})
 
 target_link_libraries(Model ${LINK_LIBS})
+
+install(TARGETS Model LIBRARY DESTINATION ${CMAKE_BINARY_DIR}/lib)
+
+get_filename_component(BUILD_DIR ${CMAKE_BINARY_DIR} NAME)
+
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/ 
+        DESTINATION ${CMAKE_BINARY_DIR}/include
+        FILES_MATCHING
+        PATTERN "*.h"
+        PATTERN "${BUILD_DIR}" EXCLUDE
+        PATTERN ".git" EXCLUDE
+        )
