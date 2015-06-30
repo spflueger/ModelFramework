@@ -14,13 +14,12 @@
 ROOTMinimizer::ROOTMinimizer() {
 	std::cout << "Initializing Minuit Minimizer..." << std::endl;
 
-	//Minimize = Migrad+Simplex
 	min = ROOT::Math::Factory::CreateMinimizer("Minuit2", "Migrad");
 	// set tolerance , etc...
-	min->SetMaxFunctionCalls(100000); // for Minuit/Minuit2
+	min->SetMaxFunctionCalls(100000);
 	min->SetMaxIterations(1000);
-	min->SetTolerance(0.001);
-	//min->SetPrecision(0.001);
+	min->SetTolerance(10.0);
+  //min->SetPrecision(1e-2);
 	min->SetPrintLevel(5);
 }
 
@@ -67,9 +66,9 @@ int ROOTMinimizer::minimize() {
 	// Set the free variables to be minimized!
 	for (unsigned int i = 0; i < control_parameter->getParameterList().size(); i++) {
 		double stepsize = TMath::Abs(
-				0.1 * control_parameter->getParameterList()[i].value);
+				0.5 * control_parameter->getParameterList()[i].value);
 		if (0.0 == control_parameter->getParameterList()[i].value)
-			stepsize = 0.001;
+			stepsize = 0.1;
 		min->SetVariable(
 				i,
 				control_parameter->getParameterList()[i].name.first + ":"

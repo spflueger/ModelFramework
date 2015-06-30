@@ -8,14 +8,14 @@
 #ifndef ROOTPLOTTER_H_
 #define ROOTPLOTTER_H_
 
-#include "Model.h"
-#include "ModelVisualizationProperties1D.h"
+#include "core/Model.h"
 
-#include <tr1/memory>
+#include "SharedPtr.h"
 
-class TGraphErrors;
+class ModelVisualizationProperties1D;
 
-using std::tr1::shared_ptr;
+class TGraphAsymmErrors;
+class TH2D;
 
 class ROOTPlotter {
 private:
@@ -23,8 +23,11 @@ public:
 	ROOTPlotter();
 	virtual ~ROOTPlotter();
 
-	TGraphErrors* createGraphFromModel1D(shared_ptr<Model> model,
-			ModelVisualizationProperties1D &visualization_properties);
+	TGraphAsymmErrors* createGraphFromModel1D(shared_ptr<Model> model,
+			ModelVisualizationProperties1D &visualization_properties) const;
+
+	TH2D* createHistogramFromModel2D(shared_ptr<Model> model,
+			std::pair<ModelVisualizationProperties1D, ModelVisualizationProperties1D> &visualization_properties) const;
 };
 
 #endif /* ROOTPLOTTER_H_ */

@@ -32,7 +32,7 @@ double StepFunction1D::eval(const double *x) const {
 void StepFunction1D::initModelParameters() {
 	amplitude = getModelParameterSet().addModelParameter("amplitude");
 	amplitude->setValue(1.0);
-	amplitude->setFixed(true);
+	amplitude->setParameterFixed(true);
 	edge = getModelParameterSet().addModelParameter("edge");
 }
 

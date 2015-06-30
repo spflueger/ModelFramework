@@ -9,12 +9,9 @@
 #define MODELMINIMIZATIONCONTROLPARAMETER_H_
 
 #include "ModelControlParameter.h"
-
-#include <tr1/memory>
+#include "SharedPtr.h"
 
 class Model;
-
-using std::tr1::shared_ptr;
 
 class ModelMinimizationControlParameter: public ModelControlParameter {
 	private:
@@ -23,7 +20,7 @@ public:
 	ModelMinimizationControlParameter();
 	virtual ~ModelMinimizationControlParameter();
 
-  double evaluate(const double *x);
+  double evaluate(const double *pars);
 };
 
 #endif /* MODELMINIMIZATIONCONTROLPARAMETER_H_ */

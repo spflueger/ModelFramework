@@ -8,8 +8,7 @@
 #ifndef MODELCONTROLPARAMETER_H_
 #define MODELCONTROLPARAMETER_H_
 
-#include "ModelStructs.h"
-#include "DataStructs.h"
+#include "core/ModelStructs.h"
 
 #include <vector>
 
@@ -22,7 +21,7 @@ public:
 	ModelControlParameter();
 	virtual ~ModelControlParameter();
 
-	virtual double evaluate(const double *par) =0;
+	virtual double evaluate(const double *pars) =0;
 
 	vector<ModelStructs::minimization_parameter>& getParameterList();
 };

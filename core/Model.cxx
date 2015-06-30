@@ -9,12 +9,25 @@
 
 //#include <iostream>
 
-Model::Model(std::string name_) :
-		model_par_handler(name_), name(name_) {
+Model::Model(std::string name_, unsigned int dimension_) :
+		model_par_handler(name_), submodel_list(), name(name_), dimension(
+				dimension_) {
 }
 
 Model::~Model() {
 	// clear map of ModelPars
+}
+
+double Model::multiply(shared_ptr<Model> m1, shared_ptr<Model> m2,
+		const double *x) const {
+	if (m1->evaluate(x) == 0.0 || m2->evaluate(x) == 0.0)
+		return 0.0;
+	return m1->evaluate(x) * m2->evaluate(x);
+}
+
+double Model::add(shared_ptr<Model> m1, shared_ptr<Model> m2,
+		const double *x) const {
+	return m1->evaluate(x) + m2->evaluate(x);
 }
 
 void Model::addModelToList(shared_ptr<Model> model) {
@@ -39,21 +52,26 @@ ModelParSet& Model::getModelParameterSet() {
 	return model_par_handler.getModelParameterSet();
 }
 
-void Model::executeParametrizationModels(const DataStructs::data_point &point) {
+void Model::executeParametrizationModels(const double *x) {
 	//first call through all submodels of this model
 	for (unsigned int i = 0; i < submodel_list.size(); i++) {
 		/*	std::cout<<submodel_list[i]<<std::endl;
 		 std::cout<<submodel_list[i]->getName()<<std::endl;*/
-		submodel_list[i]->executeParametrizationModels(point);
+		submodel_list[i]->executeParametrizationModels(x);
 	}
 	// loop over all parametrization models...
-	model_par_handler.executeParametrizationModels(point);
-	updateDomain();
+	model_par_handler.executeParametrizationModels(x);
+	if (model_par_handler.hasParametrizationModels())
+		updateDomain();
 }
 
-double Model::evaluate() {
-	executeParametrizationModels(x);
-	return eval();
+std::pair<double, double> Model::getUncertaincy(const double *x) const {
+	return std::make_pair(0.0, 0.0);
+}
+
+double Model::evaluate(const double *x) {
+	//executeParametrizationModels(x);
+	return eval(x);
 }
 
 void Model::reinit() {
@@ -84,6 +102,16 @@ int Model::init() {
 
 ModelParameterHandler& Model::getModelParameterHandler() {
 	return model_par_handler;
+}
+
+void Model::updateDomainForModelWithName(const std::string& name) {
+	if (name.compare(getName()) == 0) {
+		updateDomain();
+		return;
+	}
+	for (unsigned int i = 0; i < submodel_list.size(); i++) {
+		submodel_list[i]->updateDomainForModelWithName(name);
+	}
 }
 
 void Model::updateModel() {

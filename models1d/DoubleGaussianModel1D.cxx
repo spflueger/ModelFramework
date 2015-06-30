@@ -73,13 +73,13 @@ void DoubleGaussianModel1D::initModelParameters() {
 			"gauss_sigma_ratio_narrow_wide");
 	gauss_ratio_narrow_wide = getModelParameterSet().addModelParameter(
 			"gauss_ratio_narrow_wide");
-	gauss_ratio_narrow_wide->setBounds(0.0,
+	gauss_ratio_narrow_wide->setParameterBounds(0.0,
 			std::numeric_limits<double>::max());
 	// as default the amplitude of the gauss is set to 1,
 	// which makes it a normal distribution
 	gauss_amplitude = getModelParameterSet().addModelParameter("gauss_amplitude");
 	gauss_amplitude->setValue(1.0);
-	gauss_amplitude->setFixed(true);
+	gauss_amplitude->setParameterFixed(true);
 }
 
 double DoubleGaussianModel1D::eval(const double *x) const {

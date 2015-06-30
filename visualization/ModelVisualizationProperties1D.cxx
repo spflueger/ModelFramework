@@ -7,15 +7,13 @@
 
 #include "ModelVisualizationProperties1D.h"
 
-ModelVisualizationProperties1D::ModelVisualizationProperties1D() : binning_factor(1.0) {
-	// TODO Auto-generated constructor stub
-	evaluations = 500;
+ModelVisualizationProperties1D::ModelVisualizationProperties1D() :
+		plot_range(), binning_factor(1.0), evaluations(500) {
 }
 
-ModelVisualizationProperties1D::ModelVisualizationProperties1D(shared_ptr<Data> data) {
-	// TODO Auto-generated constructor stub
-	evaluations = 500;
-	binning_factor = data->getData().begin()->getBinnedDataPoint()->scaling_factor;
+ModelVisualizationProperties1D::ModelVisualizationProperties1D(
+		shared_ptr<Data> data) :
+		plot_range(), binning_factor(data->getBinningFactor()), evaluations(500) {
 }
 
 double ModelVisualizationProperties1D::getBinningFactor() const {
@@ -26,7 +24,7 @@ unsigned int ModelVisualizationProperties1D::getEvaluations() const {
 	return evaluations;
 }
 
-DataStructs::dimension_range ModelVisualizationProperties1D::getPlotRange() const {
+DataStructs::DimensionRange ModelVisualizationProperties1D::getPlotRange() const {
 	return plot_range;
 }
 
@@ -39,7 +37,7 @@ void ModelVisualizationProperties1D::setEvaluations(unsigned int evaluations_) {
 }
 
 void ModelVisualizationProperties1D::setPlotRange(
-		DataStructs::dimension_range plot_range_) {
+		DataStructs::DimensionRange plot_range_) {
 	plot_range = plot_range_;
 }
 

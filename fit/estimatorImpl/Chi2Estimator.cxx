@@ -6,8 +6,8 @@
  */
 
 #include "Chi2Estimator.h"
-#include "Model.h"
-#include "Data.h"
+#include "core/Model.h"
+#include "fit/data/Data.h"
 
 #include <iostream>
 
@@ -19,7 +19,7 @@ Chi2Estimator::~Chi2Estimator() {
 	// TODO Auto-generated destructor stub
 }
 
-double Chi2Estimator::eval() const {
+double Chi2Estimator::eval(shared_ptr<Data> data) {
 	//calculate chisquare
 	double chisq = 0.0;
 	double delta;
@@ -30,11 +30,24 @@ double Chi2Estimator::eval() const {
 		shared_ptr<DataStructs::binned_data_point> data_point;
 		if (data_points[i].isPointUsed()) {
 			data_point = data_points[i].getBinnedDataPoint();
-			delta = (data_point->value
-					- data_point->scaling_factor
-							* fit_model->evaluate(&data_point->point.coordinates[0].value))
-					/ data_point->value_error;
-			chisq += delta * delta;
+			delta =
+					(data_point->z
+							- data->getBinningFactor()
+									* fit_model->evaluate(
+											data_point->bin_center_value));
+			double weightsquare = data_point->z_error * data_point->z_error;
+			double modelweight = 0.0;
+		/*	if (delta > 0.0) {
+				modelweight += data->getBinningFactor()
+						* fit_model->getUncertaincy(
+								data_point->bin_center_value).second; // take upper error of model (second)
+			} else {
+				modelweight += data->getBinningFactor()
+						* fit_model->getUncertaincy(
+								data_point->bin_center_value).first; // take lower error of model (first)
+			}
+			weightsquare += modelweight * modelweight;*/
+			chisq += delta * delta / weightsquare;
 		}
 	}
 	return chisq;

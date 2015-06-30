@@ -9,16 +9,11 @@
 #define MODEL_H_
 
 #include "ModelParameterHandler.h"
-#include "ModelVarSet.h"
+
+#include "fit/data/DataStructs.h"
 
 #include <set>
 #include <string>
-#include <memory>
-
-using std::shared_ptr;
-using std::vector;
-using std::pair;
-using std::string;
 
 /**
  * This defines the abstract structure of a Model.
@@ -28,9 +23,9 @@ using std::string;
  */
 class Model {
 private:
-	string name;
+	std::string name;
 
-	ModelVarSet domain;
+	unsigned int dimension;
 
 	/**
 	 * The parameter set of the model.
@@ -41,7 +36,14 @@ private:
 	 * If this model is constructed from other models via some operation etc.
 	 * they are listed here.
 	 */
-	vector<shared_ptr<Model> > submodel_list;
+	std::vector<shared_ptr<Model> > submodel_list;
+
+protected:
+	// certain operations are totally equivalent for the 1d and 2d case
+	// define these here
+	double multiply(shared_ptr<Model> m1, shared_ptr<Model> m2, const double *x) const;
+
+	double add(shared_ptr<Model> m1, shared_ptr<Model> m2, const double *x) const;
 
 	void addModelToList(shared_ptr<Model> model);
 
@@ -49,17 +51,19 @@ public:
 	/**
 	 * see #Model description
 	 */
-	Model(std::string name_);
+	Model(std::string name_, unsigned int dimension_);
 	virtual ~Model();
 
-	void executeParametrizationModels(const DataStructs::data_point &point);
+	void executeParametrizationModels(const double *x);
 
 	/**
 	 * Called by the #evaluate() function and actually does an evaluation of
 	 * this model with the given parameters. Has to be overwritten by any
 	 * derived class.
 	 */
-	virtual double eval() const =0;
+	virtual double eval(const double *x) const =0;
+
+	virtual std::pair<double, double> getUncertaincy(const double *x) const;
 
 	/**
 	 * This function will be called by the fitter when an evaluation at a certain
@@ -67,7 +71,10 @@ public:
 	 * the parameter set connected to this set. Afterwards the normal evaluation
 	 * function of the Model is called (see #eval())
 	 */
-	double evaluate();
+	double evaluate(const double *x);
+
+	virtual double Integral(const std::vector<DataStructs::DimensionRange> &ranges
+			, double precision) =0;
 
 	/**
 	 * This function has to be overwritten by the user and has to define and
@@ -81,6 +88,11 @@ public:
 
 	int init();
 
+	/**
+	 * Returns the number of dimensions of this Model
+	 *
+	 * @returns the number of dimensions of this model
+	 */
 	unsigned int getDimension() const;
 
 	/**
@@ -94,6 +106,8 @@ public:
 	ModelParSet& getModelParameterSet();
 
 	ModelParameterHandler& getModelParameterHandler();
+
+	void updateDomainForModelWithName(const std::string& name);
 
 	/**
 	 * This method updates the model parameters that are set via parametrizations

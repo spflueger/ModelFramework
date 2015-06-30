@@ -1,29 +1,27 @@
-MACRO(HEADER_DIRECTORIES return_list dir)
-    FILE(GLOB_RECURSE new_list ${dir}/*.h)
-    SET(dir_list "")
-    FOREACH(file_path ${new_list})
-        GET_FILENAME_COMPONENT(dir_path ${file_path} PATH)
-        SET(dir_list ${dir_list} ${dir_path})
-    ENDFOREACH()
-    LIST(REMOVE_DUPLICATES dir_list)
-    SET(${return_list} ${dir_list})
-ENDMACRO()
+cmake_minimum_required(VERSION 2.6)
 
-#HEADER_DIRECTORIES(MODEL_INCLUDE_DIRECTORIES ./)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall")
 
-#include_directories(/usr/X11R6/include/)
-#link_directories(/usr/X11R6/lib)
-#SET(EXTRA_LIBS GL X11 GLU glut)
+set(INCLUDE_DIRECTORIES
+  ./
+  $ENV{ROOT_INCLUDE_DIR}
+  $ENV{VMCWORKDIR}/lmd/LmdQA
+  $ENV{BOOST_ROOT}/include
+)
+include_directories(${INCLUDE_DIRECTORIES})
 
-########################### build core  ##################################
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+set(LINK_DIRECTORIES
+  $ENV{ROOT_LIBRARY_DIR}
+  $ENV{FAIRLIBDIR}
+  $ENV{BOOST_ROOT}/lib
+)
+link_directories(${LINK_DIRECTORIES})
+set(LINK_LIBS Core Hist Gpad Graf gsl gslcblas boost_thread boost_filesystem boost_system)
 
-include_directories(./)
-link_directories(./)
 
-FILE(GLOB_RECURSE MODEL_SRCS core/*.cxx)
+file(GLOB_RECURSE SRCS ./*.cxx)
 
-add_library(ModelCore SHARED ${MODEL_SRCS})
+add_library(Model SHARED ${SRCS})
 
-#TARGET_LINK_LIBRARIES(ModelCore)
+target_link_libraries(Model ${LINK_LIBS})

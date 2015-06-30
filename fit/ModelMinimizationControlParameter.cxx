@@ -6,18 +6,15 @@
  */
 
 #include "ModelMinimizationControlParameter.h"
-#include "Model.h"
+#include "core/Model.h"
 
-ModelMinimizationControlParameter::ModelMinimizationControlParameter() {
-	// TODO Auto-generated constructor stub
-
+ModelMinimizationControlParameter::ModelMinimizationControlParameter() : model() {
 }
 
 ModelMinimizationControlParameter::~ModelMinimizationControlParameter() {
 	// TODO Auto-generated destructor stub
 }
 
-double ModelMinimizationControlParameter::evaluate(
-		const double *x) {
-	return model->eval(x);
+double ModelMinimizationControlParameter::evaluate(const double *pars) {
+	return model->eval(pars);
 }

@@ -11,8 +11,7 @@
 #include <iostream>
 
 ModelParameterHandler::ModelParameterHandler(std::string model_name_) :
-		model_par_set(model_name_) {
-	// TODO Auto-generated constructor stub
+		model_par_set(model_name_), parametrizations() {
 }
 
 ModelParameterHandler::~ModelParameterHandler() {
@@ -42,6 +41,17 @@ int ModelParameterHandler::checkParametrizations() const {
 		}
 	}
 	return error_code;
+}
+
+bool ModelParameterHandler::hasParametrizationModels() const {
+	for (std::map<const shared_ptr<ModelPar>, ParametrizationProxy>::const_iterator it =
+			parametrizations.begin(); it != parametrizations.end(); it++) {
+		if (it->second.hasParametrizationModel()) {
+			if(it->second.getParametrizationModel()->getModelPar()->isParameterFixed())
+			  return true;;
+		}
+	}
+	return false;
 }
 
 int ModelParameterHandler::checkParameters() {
@@ -105,10 +115,9 @@ void ModelParameterHandler::registerParametrization(
 }
 
 void ModelParameterHandler::registerParametrizations(
-		ModelParSet &model_par_set_,
-		shared_ptr<Parametrization> parametrization) {
-	for (std::map<std::pair<std::string, std::string>, shared_ptr<ModelPar>
-			, ModelStructs::stringpair_comp>::iterator it =
+		ModelParSet &model_par_set_, shared_ptr<Parametrization> parametrization) {
+	for (std::map<std::pair<std::string, std::string>, shared_ptr<ModelPar>,
+			ModelStructs::stringpair_comp>::iterator it =
 			model_par_set_.getModelParameterMap().begin();
 			it != model_par_set_.getModelParameterMap().end(); it++) {
 		registerParametrization(it->second, parametrization);
@@ -120,13 +129,12 @@ void ModelParameterHandler::registerParametrizationModel(
 		shared_ptr<ParametrizationModel> parametrization_model) {
 	if (model_par_set.modelParameterExists(model_par)) {
 		parametrization_model->setModelPar(model_par);
-		parametrizations[model_par].setParametrizationModel(
-				parametrization_model);
+		parametrizations[model_par].setParametrizationModel(parametrization_model);
 		model_par_set.addModelParameters(
 				parametrizations[model_par].getParametrizationModel()->getModel()->getModelParameterSet());
 		model_par->setValue(0.0); // this makes the model par set
 		model_par->setLocked(false); // because it will be updated on each evaluation
-									 // we have to unlock it
+																 // we have to unlock it
 	} else {
 		// throw an exception that user is trying to register a parametrization to a model,
 		// which does not define the given model parameter
@@ -153,15 +161,21 @@ ParametrizationProxy ModelParameterHandler::getParametrizationProxyForModelParam
 	}
 }
 
-void ModelParameterHandler::executeParametrizationModels(
-		const DataStructs::data_point &point) {
-	for (std::map<shared_ptr<ModelPar>, ParametrizationProxy>::iterator it =
+void ModelParameterHandler::executeParametrizationModels(const double *x) {
+	for (std::map<const shared_ptr<ModelPar>, ParametrizationProxy>::iterator it =
 			parametrizations.begin(); it != parametrizations.end(); it++) {
 		if (it->second.hasParametrizationModel()) {
+			//std::cout
+			//		<< it->second.getParametrizationModel()->getModelPar()->getName()
+			//		<< std::endl;
 			// if the model parameter is freed do NOT call the parametrization model
-			if (it->second.getParametrizationModel()->getModelPar()->isFixed()) {
-				it->second.getParametrizationModel()->getModel()->updateDomain();
-				it->second.getParametrizationModel()->parametrize(point);
+			if (it->second.getParametrizationModel()->getModelPar()->isParameterFixed()) {
+				//it->second.getParametrizationModel()->getModel()->updateDomain();
+				//std::cout << x[0] << " " << x[1] << std::endl;
+				it->second.getParametrizationModel()->parametrize(x);
+				//std::cout
+				//		<< it->second.getParametrizationModel()->getModelPar()->getValue()
+				//		<< std::endl;
 			}
 		}
 	}
@@ -170,12 +184,12 @@ void ModelParameterHandler::executeParametrizationModels(
 void ModelParameterHandler::updateModelParameters() {
 	// loop over all registered updater parametrizations which
 	// adjust the dependent parameters
-	for (std::map<shared_ptr<ModelPar>, ParametrizationProxy>::iterator it =
-			parametrizations.begin(); it != parametrizations.end(); it++) {
-		if (it->second.hasParametrization()) {
-			it->second.getParametrization()->parametrize();
-		}
-	}
+	/*for (std::map<shared_ptr<ModelPar>, ParametrizationProxy>::iterator it =
+	 parametrizations.begin(); it != parametrizations.end(); it++) {
+	 if (it->second.hasParametrization()) {
+	 it->second.getParametrization()->parametrize();
+	 }
+	 }*/
 }
 
 void ModelParameterHandler::initModelParametersFromFitResult(
@@ -185,16 +199,16 @@ void ModelParameterHandler::initModelParametersFromFitResult(
 	for (std::set<ModelStructs::minimization_parameter>::const_iterator it =
 			fit_params.begin(); it != fit_params.end(); it++) {
 		if (getModelParameterSet().modelParameterExists(it->name)) {
-			shared_ptr<ModelPar> model_par =
-					getModelParameterSet().getModelParameter(it->name);
+			shared_ptr<ModelPar> model_par = getModelParameterSet().getModelParameter(
+					it->name);
 			bool was_fixed = false;
-			if (model_par->isFixed()) {
+			if (model_par->isParameterFixed()) {
 				was_fixed = true;
-				model_par->setFixed(false);
+				model_par->setParameterFixed(false);
 			}
 			model_par->setValue(it->value);
 			if (was_fixed)
-				model_par->setFixed(true);
+				model_par->setParameterFixed(true);
 		}
 	}
 }

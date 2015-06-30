@@ -8,10 +8,10 @@
 #ifndef MODELPARAMETERHANDLER_H_
 #define MODELPARAMETERHANDLER_H_
 
-#include "core/ModelParSet.h"
-#include "core/Parametrization.h"
-#include "core/ParametrizationModel.h"
-#include "core/ParametrizationProxy.h"
+#include "ModelParSet.h"
+#include "Parametrization.h"
+#include "ParametrizationModel.h"
+#include "ParametrizationProxy.h"
 #include "fit/ModelFitResult.h"
 
 #include <map>
@@ -43,6 +43,8 @@ public:
 
 	int checkParametrizations() const;
 
+	bool hasParametrizationModels() const;
+
 	int checkParameters();
 
 	void registerUpdaters();
@@ -61,7 +63,7 @@ public:
 	ParametrizationProxy getParametrizationProxyForModelParameter(
 			std::string name_);
 
-	void executeParametrizationModels(const DataStructs::data_point &point);
+	void executeParametrizationModels(const double *x);
 
 	/**
 	 * This method updates the model parameters that are set via

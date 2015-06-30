@@ -27,7 +27,7 @@ void GaussianModel1D::initModelParameters() {
 	// which makes it a normal distribution
 	gauss_amplitude = getModelParameterSet().addModelParameter("gauss_amplitude");
 	gauss_amplitude->setValue(1.0);
-	gauss_amplitude->setFixed(true);
+	gauss_amplitude->setParameterFixed(true);
 }
 
 double GaussianModel1D::eval(const double *x) const {

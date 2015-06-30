@@ -11,9 +11,8 @@
 #include "ModelControlParameter.h"
 #include "ModelFitResult.h"
 
-#include <tr1/memory>
+#include "SharedPtr.h"
 
-using std::tr1::shared_ptr;
 
 /**
  * Abstract class for constructing minimizer objects. Concrete implementations

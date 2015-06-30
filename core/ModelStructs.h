@@ -13,6 +13,10 @@
 
 namespace ModelStructs {
 
+enum InterpolationType {
+	CONSTANT, LINEAR, SPLINE
+};
+
 /**
  * Small structure defining the comparison operator used in the map
  * #model_par_map. Will return true only if this model parameter is equal to
@@ -21,8 +25,8 @@ namespace ModelStructs {
  * on a name comparison.
  */
 struct stringpair_comp {
-	bool operator()(const std::pair<std::string, std::string>& lhs
-			, const std::pair<std::string, std::string>& rhs) const {
+	bool operator()(const std::pair<std::string, std::string>& lhs,
+			const std::pair<std::string, std::string>& rhs) const {
 		if (lhs.first.compare(rhs.first) < 0) {
 			return true;
 		} else if (lhs.first.compare(rhs.first) == 0) {
@@ -46,20 +50,16 @@ struct minimization_parameter {
 	std::pair<std::string, std::string> name;
 	double value;
 	double error;
-	minimization_parameter() {
-		name = std::make_pair(std::string(""), std::string(""));
-		value = 0.0;
-		error = 0.0;
+	minimization_parameter() :
+			name(std::make_pair(std::string(""), std::string(""))), value(0.0), error(
+					0.0) {
 	}
-	minimization_parameter(std::pair<std::string, std::string> name_) {
-		name = name_;
-		value = 0.0;
-		error = 0.0;
+	minimization_parameter(std::pair<std::string, std::string> name_) :
+			name(name_), value(0.0), error(0.0) {
 	}
-	minimization_parameter(std::pair<std::string, std::string> name_, double value_, double error_) {
-		name = name_;
-		value = value_;
-		error = error_;
+	minimization_parameter(std::pair<std::string, std::string> name_,
+			double value_, double error_) :
+			name(name_), value(value_), error(error_) {
 	}
 	bool operator<(const minimization_parameter &rhs) const {
 		ModelStructs::stringpair_comp compare;
@@ -68,6 +68,5 @@ struct minimization_parameter {
 };
 
 }
-
 
 #endif /* MODELSTRUCTS_H_ */

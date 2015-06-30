@@ -8,15 +8,11 @@
 #ifndef PARAMETRIZATIONMODEL_H_
 #define PARAMETRIZATIONMODEL_H_
 
-#include "data/DataStructs.h"
-
-#include <memory>
+#include "SharedPtr.h"
 
 class Model;
 class ModelPar;
 class ModelParSet;
-
-using std::shared_ptr;
 
 /**
  * A #ParametrizationModel is a special type of #Model. It functions as a
@@ -33,7 +29,7 @@ public:
   ParametrizationModel(shared_ptr<Model> model_);
   virtual ~ParametrizationModel();
 
-  void parametrize(const DataStructs::data_point &point);
+  void parametrize(const double *x);
 
   void setModelPar(shared_ptr<ModelPar> model_par_);
   const shared_ptr<ModelPar> getModelPar() const;

@@ -8,7 +8,7 @@
 #ifndef CHI2ESTIMATOR_H_
 #define CHI2ESTIMATOR_H_
 
-#include "ModelEstimator.h"
+#include "fit/ModelEstimator.h"
 
 class Chi2Estimator: public ModelEstimator {
 public:
@@ -16,7 +16,7 @@ public:
 	virtual ~Chi2Estimator();
 
 	// the chisquare function
-	double eval() const;
+	double eval(shared_ptr<Data> data);
 };
 
 #endif /* CHI2ESTIMATOR_H_ */

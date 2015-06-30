@@ -8,25 +8,23 @@
 #ifndef MODELPARSET_H_
 #define MODELPARSET_H_
 
-#include "ModelAbsVarSet.h"
 #include "ModelPar.h"
 #include "ModelStructs.h"
 
 #include <map>
 #include <vector>
 #include <string>
-//#include <tr1/memory>
 
-//using std::tr1::shared_ptr;
-
-class ModelParSet : public ModelAbsVarSet {
+class ModelParSet {
 private:
+	std::string model_name;
+
 	/**
 	 * Map containing all the model parameters which are unique, independent
 	 * and belong to this model.
 	 */
 	std::map<std::pair<std::string, std::string>, shared_ptr<ModelPar>
-			, ModelStructs::stringpair_comp> parameters;
+			, ModelStructs::stringpair_comp> model_par_map;
 
 public:
 	ModelParSet(std::string model_name_);
