@@ -5,7 +5,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall")
 set(INCLUDE_DIRECTORIES
   ./
   $ENV{ROOT_INCLUDE_DIR}
-  $ENV{VMCWORKDIR}/lmd/LmdQA
   $ENV{BOOST_ROOT}/include
 )
 include_directories(${INCLUDE_DIRECTORIES})
@@ -13,7 +12,6 @@ include_directories(${INCLUDE_DIRECTORIES})
 
 set(LINK_DIRECTORIES
   $ENV{ROOT_LIBRARY_DIR}
-  $ENV{FAIRLIBDIR}
   $ENV{BOOST_ROOT}/lib
 )
 link_directories(${LINK_DIRECTORIES})
