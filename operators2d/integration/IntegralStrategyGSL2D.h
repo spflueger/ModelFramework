@@ -9,27 +9,33 @@
 #include <gsl/gsl_monte.h>
 #include <gsl/gsl_monte_vegas.h>
 
+extern thread_local Model2D *current_model;
+
 class IntegralStrategyGSL2D: public IntegralStrategy2D {
 private:
-	static Model2D *current_model;
+  const gsl_rng_type *T;
+  size_t start_calls;
+  size_t max_calls;
 
-	const gsl_rng_type *T;
-	gsl_rng *r;
-	gsl_monte_vegas_state *s;
-	size_t calls;
-	size_t maxcalls;
+  static double gsl_func_wrapper(double *x, size_t dim, void *params) {
+    Model2D *current_model_temp = current_model;
+    double value = current_model->eval(x);
+    current_model = current_model_temp;
+    return value;
+  }
 
-	static double gsl_func_wrapper(double *x, size_t dim, void *params) {
-		Model2D *current_model_temp = current_model;
-		double value = current_model->eval(x);
-		current_model = current_model_temp;
-		return value;
-	}
 public:
-	IntegralStrategyGSL2D();
-	virtual ~IntegralStrategyGSL2D();
+  IntegralStrategyGSL2D(unsigned int start_calls_ = 500,
+      unsigned int max_calls_ = 100000);
+  virtual ~IntegralStrategyGSL2D();
 
-	double Integral(Model2D *model2d, double xlow, double xhigh, double ylow,
-			double yhigh, double precision);
+  void setStartNumberOfFunctionEvaluations(unsigned int start_calls_);
+  void setMaximumNumberOfFunctionEvaluations(unsigned int max_calls_);
+
+  unsigned int determineOptimalCallNumber(Model2D *model2d,
+      const std::vector<DataStructs::DimensionRange> &ranges, double precision);
+
+  double Integral(Model2D *model2d,
+      const std::vector<DataStructs::DimensionRange> &ranges, double precision);
 };
 #endif /* INTEGRALSTRATEGYGSL2D_H_ */
