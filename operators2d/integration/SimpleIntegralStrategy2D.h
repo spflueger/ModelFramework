@@ -13,12 +13,20 @@
 class Model2D;
 
 class SimpleIntegralStrategy2D: public IntegralStrategy2D {
+  unsigned int max_grid_constant;
+  unsigned int used_grid_constant;
 public:
-	SimpleIntegralStrategy2D();
-	virtual ~SimpleIntegralStrategy2D();
+  SimpleIntegralStrategy2D();
+  virtual ~SimpleIntegralStrategy2D();
 
-	double Integral(Model2D *model1d, double xlow, double xhigh, double ylow,
-			double yhigh, double precision);
+  void setUsedEvaluationGridConstant(unsigned int used_grid_constant_);
+  void setMaximumEvaluationGridConstant(unsigned int max_grid_constant_);
+
+  unsigned int determineOptimalCallNumber(Model2D *model2d,
+      const std::vector<DataStructs::DimensionRange> &ranges, double precision);
+
+  double Integral(Model2D *model2d,
+      const std::vector<DataStructs::DimensionRange> &ranges, double precision);
 };
 
 #endif /* SIMPLEINTEGRALSTRATEGY2D_H_ */
