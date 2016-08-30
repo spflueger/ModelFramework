@@ -36,8 +36,8 @@ void ROOTDataHelper::fillBinnedData(shared_ptr<Data> data,
 		datapoint->z = hist_1d->GetBinContent(i);
 		datapoint->z_error = hist_1d->GetBinError(i);
 
-		if (datapoint->z == 0.0)
-			continue;
+		//if (datapoint->z == 0.0)
+		//	continue;
 
 		DataPointProxy dpp;
 		dpp.setBinnedDataPoint(datapoint);
@@ -62,8 +62,8 @@ void ROOTDataHelper::fillBinnedData(shared_ptr<Data> data,
 				datapoint->z = hist_2d->GetBinContent(ix, iy);
 				datapoint->z_error = hist_2d->GetBinError(ix, iy);
 
-				if (datapoint->z == 0.0)
-					continue;
+				//if (datapoint->z == 0.0)
+				//	continue;
 
 				DataPointProxy dpp;
 				dpp.setBinnedDataPoint(datapoint);
