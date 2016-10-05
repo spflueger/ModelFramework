@@ -35,7 +35,9 @@ double Chi2Estimator::eval(shared_ptr<Data> data) {
 							- data->getBinningFactor()
 									* fit_model->evaluate(
 											data_point->bin_center_value));
-			double weightsquare = data_point->z_error * data_point->z_error;
+			double weightsquare(1.0);
+			if(data_point->z_error != 0.0)
+			  weightsquare = data_point->z_error * data_point->z_error;
 			double modelweight = 0.0;
 		/*	if (delta > 0.0) {
 				modelweight += data->getBinningFactor()
