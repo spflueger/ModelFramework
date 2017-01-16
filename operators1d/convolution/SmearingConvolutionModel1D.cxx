@@ -24,7 +24,7 @@ void SmearingConvolutionModel1D::initModelParameters() {
 
 }
 
-double SmearingConvolutionModel1D::eval(const double *x) const {
+mydouble SmearingConvolutionModel1D::eval(const double *x) const {
 	// x[0] is the reconstructed value
 	double value = 0.0;
 	// first divide the domain of the first model (that should be smeared) into subintervals

@@ -33,8 +33,8 @@ public:
 
 	void setIntegralStrategy(shared_ptr<IntegralStrategy2D> integral_strategy_);
 
-	double Integral(const std::vector<DataStructs::DimensionRange> &ranges
-			, double precision);
+	mydouble Integral(const std::vector<DataStructs::DimensionRange> &ranges
+			, mydouble precision);
 };
 
 #endif /* MODEL2D_H_ */

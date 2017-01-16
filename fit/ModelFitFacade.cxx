@@ -14,103 +14,188 @@ using std::cout;
 using std::endl;
 
 ModelFitFacade::ModelFitFacade() :
-		data(), model(), estimator(), minimizer(), estimator_options() {
+    data(), model(), estimator(), minimizer(), estimator_options() {
 }
 
 ModelFitFacade::~ModelFitFacade() {
-	// TODO Auto-generated destructor stub
+  // TODO Auto-generated destructor stub
 }
 
 const EstimatorOptions& ModelFitFacade::getEstimatorOptions() const {
-	return estimator_options;
+  return estimator_options;
 }
 
 void ModelFitFacade::setEstimatorOptions(const EstimatorOptions& est_opt_) {
-	estimator_options = est_opt_;
+  estimator_options = est_opt_;
 }
 
 shared_ptr<Data> ModelFitFacade::getData() const {
-	return data;
+  return data;
 }
 
 shared_ptr<ModelEstimator> ModelFitFacade::getEstimator() const {
-	return estimator;
+  return estimator;
 }
 
 shared_ptr<ModelMinimizer> ModelFitFacade::getMinimizer() const {
-	return minimizer;
+  return minimizer;
 }
 
 shared_ptr<Model> ModelFitFacade::getModel() const {
-	return model;
+  return model;
 }
 
 void ModelFitFacade::setData(shared_ptr<Data> data_) {
-	data = data_;
+  data = data_;
 }
 
 void ModelFitFacade::setEstimator(shared_ptr<ModelEstimator> estimator_) {
-	estimator = estimator_;
+  estimator = estimator_;
 }
 
 void ModelFitFacade::setMinimizer(shared_ptr<ModelMinimizer> minimizer_) {
-	minimizer = minimizer_;
+  minimizer = minimizer_;
 }
 
 void ModelFitFacade::setModel(shared_ptr<Model> model_) {
-	model = model_;
+  model = model_;
+}
+
+Data ModelFitFacade::scanEstimatorSpace(
+    const std::vector<std::string>& variable_names) {
+  Data scan_data(2);
+
+  // check that estimator is set
+  if (!estimator) {
+    std::cout << "Estimator not set...\n";
+    return scan_data;
+  }
+
+  // check if data and model have the correct dimensions
+  if (model->getDimension() != data->getDimension()) {
+    std::cout << "The model has a dimension of " << model->getDimension()
+        << ", which does not match the data dimension of "
+        << data->getDimension() << "!" << std::endl;
+    return scan_data;
+  }
+
+  if (variable_names.size() > 2) {
+    std::cout << "only two variable scan supported...\n";
+    return scan_data;
+  }
+
+  // set model
+  estimator->setModel(model);
+  // set data
+  estimator->setData(data);
+  // apply estimator options
+  std::cout
+      << "applying estimator options (in case of integral scaling this can mean integrals are being computed!)..."
+      << std::endl;
+  estimator->applyEstimatorOptions(estimator_options);
+
+  std::cout << "Now performing actual scan!!!!\n";
+  // find the correct parameters first
+  auto free_params = model->getModelParameterSet().getFreeModelParameters();
+  double params[free_params.size()];
+  unsigned int index_1(0);
+  unsigned int index_2(0);
+  unsigned int counter(0);
+  for (auto param : free_params) {
+    if (param.first.second.compare(variable_names[0]) == 0)
+      index_1 = counter;
+    else if (param.first.second.compare(variable_names[1]) == 0)
+      index_2 = counter;
+    params[counter] = param.second->getValue();
+    ++counter;
+  }
+  int num_bins = 40;
+  double scanwidth(0.3);
+  double x_center = params[index_1];
+  double y_center = params[index_2];
+  double stepsize_x = x_center * scanwidth / num_bins;
+  double stepsize_y = y_center * scanwidth / num_bins;
+
+  DataPointProxy dpp;
+  for (int ix = -num_bins; ix < num_bins + 1; ++ix) {
+    for (int iy = -num_bins; iy < num_bins + 1; ++iy) {
+      shared_ptr<DataStructs::binned_data_point> bdp(
+          new DataStructs::binned_data_point);
+      bdp->bin_widths[0] = stepsize_x;
+      bdp->bin_widths[1] = stepsize_y;
+      dpp.setBinnedDataPoint(bdp);
+      params[index_1] = x_center + stepsize_x * ix;
+      params[index_2] = y_center + stepsize_y * iy;
+      bdp->bin_center_value[0] = params[index_1];
+      bdp->bin_center_value[1] = params[index_2];
+      bdp->z = estimator->evaluate(params);
+      scan_data.insertData(dpp);
+      std::cout << "adding: " << bdp->bin_center_value[0] << " : "
+          << bdp->bin_center_value[1] << " = " << bdp->z << std::endl;
+    }
+  }
+
+  return scan_data;
 }
 
 ModelFitResult ModelFitFacade::Fit() {
-	ModelFitResult fit_result_dummy;
+  ModelFitResult fit_result_dummy;
 
-	// check that estimator is set
-	if (!estimator) {
-		fit_result_dummy.setFitStatus(-1);
-		return fit_result_dummy;
-	}
+  // check that estimator is set
+  if (!estimator) {
+    fit_result_dummy.setFitStatus(-1);
+    return fit_result_dummy;
+  }
 
-	// check if data and model have the correct dimensions
-	if (model->getDimension() != data->getDimension()) {
-		std::cout << "The model has a dimension of " << model->getDimension()
-				<< ", which does not match the data dimension of "
-				<< data->getDimension() << "!" << std::endl;
-		return fit_result_dummy;
-	}
+  // check if data and model have the correct dimensions
+  if (model->getDimension() != data->getDimension()) {
+    std::cout << "The model has a dimension of " << model->getDimension()
+        << ", which does not match the data dimension of "
+        << data->getDimension() << "!" << std::endl;
+    return fit_result_dummy;
+  }
 
-	// set model
-	estimator->setModel(model);
-	// set data
-	estimator->setData(data);
-	// apply estimator options
-	std::cout
-			<< "applying estimator options (in case of integral scaling this can mean integrals are being computed!)..."
-			<< std::endl;
-	estimator->applyEstimatorOptions(estimator_options);
+  // set model
+  estimator->setModel(model);
+  // set data
+  estimator->setData(data);
+  // apply estimator options
+  std::cout
+      << "applying estimator options (in case of integral scaling this can mean integrals are being computed!)..."
+      << std::endl;
+  estimator->applyEstimatorOptions(estimator_options);
 
-	// check that minimizer exists
-	if (!minimizer) {
-		fit_result_dummy.setFitStatus(-2);
-		return fit_result_dummy;
-	}
+  // check that minimizer exists
+  if (!minimizer) {
+    fit_result_dummy.setFitStatus(-2);
+    return fit_result_dummy;
+  }
 
-	minimizer->setControlParameter(estimator);
+  minimizer->setControlParameter(estimator);
 
-	// call minimization procedure
-	int fit_status = minimizer->doMinimization();
+  auto const& free_params = model->getModelParameterSet().getFreeModelParameters();
+  std::vector<double> pars;
 
-	if (fit_status) {
-		cout << "ERROR: Problem while performing fit. Returning NULL pointer!"
-				<< endl;
-		fit_result_dummy.setFitStatus(fit_status);
-		return fit_result_dummy;
-	}
+  for (auto const &param : free_params) {
+    pars.push_back(param.second->getValue());
+  }
+  estimator->setInitialEstimatorValue(estimator->evaluate(&pars[0]));
 
-	ModelFitResult fit_result = minimizer->createModelFitResult();
-	fit_result.setFitStatus(fit_status);
+  // call minimization procedure
+  int fit_status = minimizer->doMinimization();
 
-	fit_result.setFinalEstimatorValue(estimator->getLastEstimatorValue());
-	fit_result.setNumberOfDataPoints(
-			estimator->getData()->getNumberOfUsedDataPoints());
-	return fit_result;
+  if (fit_status) {
+    cout << "ERROR: Problem while performing fit. Returning NULL pointer!"
+        << endl;
+    fit_result_dummy.setFitStatus(fit_status);
+    return fit_result_dummy;
+  }
+
+  ModelFitResult fit_result = minimizer->createModelFitResult();
+  fit_result.setFitStatus(fit_status);
+
+  fit_result.setFinalEstimatorValue(estimator->getLastEstimatorValue());
+  fit_result.setNumberOfDataPoints(
+      estimator->getData()->getNumberOfUsedDataPoints());
+  return fit_result;
 }

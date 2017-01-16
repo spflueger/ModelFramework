@@ -15,6 +15,8 @@
 #include <set>
 #include <string>
 
+using mydouble = long double;
+
 /**
  * This defines the abstract structure of a Model.
  * In principle a model should generate the model parameters itself, and be able
@@ -61,7 +63,7 @@ public:
 	 * this model with the given parameters. Has to be overwritten by any
 	 * derived class.
 	 */
-	virtual double eval(const double *x) const =0;
+	virtual mydouble eval(const double *x) const =0;
 
 	virtual std::pair<double, double> getUncertaincy(const double *x) const;
 
@@ -71,10 +73,10 @@ public:
 	 * the parameter set connected to this set. Afterwards the normal evaluation
 	 * function of the Model is called (see #eval())
 	 */
-	double evaluate(const double *x);
+	mydouble evaluate(const double *x);
 
-	virtual double Integral(const std::vector<DataStructs::DimensionRange> &ranges
-			, double precision) =0;
+	virtual mydouble Integral(const std::vector<DataStructs::DimensionRange> &ranges
+			, mydouble precision) =0;
 
 	/**
 	 * This function has to be overwritten by the user and has to define and

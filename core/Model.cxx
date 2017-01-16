@@ -69,7 +69,7 @@ std::pair<double, double> Model::getUncertaincy(const double *x) const {
 	return std::make_pair(0.0, 0.0);
 }
 
-double Model::evaluate(const double *x) {
+mydouble Model::evaluate(const double *x) {
 	//executeParametrizationModels(x);
 	return eval(x);
 }

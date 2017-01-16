@@ -15,7 +15,7 @@ public:
   BoxModel2D(std::string name_);
 	virtual ~BoxModel2D();
 
-  double eval(const double *x) const;
+  mydouble eval(const double *x) const;
 
   void initModelParameters();
 

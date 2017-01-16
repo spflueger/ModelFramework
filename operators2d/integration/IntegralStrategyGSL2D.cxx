@@ -64,8 +64,8 @@ unsigned int IntegralStrategyGSL2D::determineOptimalCallNumber(Model2D *model2d,
   return num_calls;
 }
 
-double IntegralStrategyGSL2D::Integral(Model2D *model2d,
-    const std::vector<DataStructs::DimensionRange> &ranges, double precision) {
+mydouble IntegralStrategyGSL2D::Integral(Model2D *model2d,
+    const std::vector<DataStructs::DimensionRange> &ranges, mydouble precision) {
   current_model = model2d;
   //gsl_func_wrapper gsl_func(model2d);
 

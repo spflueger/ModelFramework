@@ -20,7 +20,7 @@ public:
 	StepFunction1D(std::string name_, bool falling_edge_);
 	virtual ~StepFunction1D();
 
-  double eval(const double *x) const;
+  mydouble eval(const double *x) const;
 
   void initModelParameters();
 

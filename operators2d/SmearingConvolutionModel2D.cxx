@@ -18,7 +18,7 @@ void SmearingConvolutionModel2D::initModelParameters() {
 
 }
 
-double SmearingConvolutionModel2D::eval(const double *x) const {
+mydouble SmearingConvolutionModel2D::eval(const double *x) const {
 	// x[0]/x[1] are the reconstructed values
 	//std::cout<<x[0]<<" : "<<x[1]<<std::endl;
 	double value = 0.0;

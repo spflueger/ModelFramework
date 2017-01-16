@@ -39,7 +39,7 @@ public:
 	double evaluateConstant(const double *x) const;
 	double evaluateLinear(const double *x) const;
 
-	double eval(const double *x) const;
+	mydouble eval(const double *x) const;
 
 	void initModelParameters();
 

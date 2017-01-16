@@ -23,12 +23,25 @@ class Data;
 class Model;
 class ModelPar;
 
+
+// A cost functor that implements the residual r = 10 - x.
+struct CostFunctor {
+  shared_ptr<ModelControlParameter> est;
+  CostFunctor(shared_ptr<ModelControlParameter> est_) : est(est_) {
+  }
+  bool operator()(double const* const* x, double* residual) const {
+    residual[0] = est->evaluate(*x);
+    return true;
+  }
+};
+
 class ModelEstimator: public ModelControlParameter {
 private:
 	boost::mutex mtx; // lock variable for multi threading
 	unsigned int nthreads;
 	double last_estimator_value;
 	std::vector<double> previous_values;
+	double initial_estimator_value;
 
 	// list of free parameters
 	std::map<std::pair<std::string, std::string>, shared_ptr<ModelPar>
@@ -64,6 +77,7 @@ public:
 	const shared_ptr<Data> getData() const;
 	void setData(shared_ptr<Data> new_data);
 
+	void setInitialEstimatorValue(double initial_estimator_value_);
 	std::vector<shared_ptr<ModelPar> >& getFreeParameterList();
 
 	double getLastEstimatorValue() const;

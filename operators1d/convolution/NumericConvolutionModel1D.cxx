@@ -20,7 +20,7 @@ void NumericConvolutionModel1D::initModelParameters() {
 
 }
 
-double NumericConvolutionModel1D::eval(const double *x) const {
+mydouble NumericConvolutionModel1D::eval(const double *x) const {
 	double xx[3], val = 0.0;
 	double integration_range = second->getDomainRange();
 	if (integration_range == 0.0) {

@@ -45,8 +45,8 @@ void Model2D::setIntegralStrategy(
 	integral_strategy = integral_strategy_;
 }
 
-double Model2D::Integral(const std::vector<DataStructs::DimensionRange> &ranges,
-		double precision) {
+mydouble Model2D::Integral(const std::vector<DataStructs::DimensionRange> &ranges,
+		mydouble precision) {
 	return integral_strategy->Integral(this, ranges,
 			precision);
 }

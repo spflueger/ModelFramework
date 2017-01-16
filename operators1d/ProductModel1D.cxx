@@ -21,7 +21,7 @@ void ProductModel1D::initModelParameters() {
 
 }
 
-double ProductModel1D::eval(const double *x) const {
+mydouble ProductModel1D::eval(const double *x) const {
 	return multiply(first, second, x);
 }
 

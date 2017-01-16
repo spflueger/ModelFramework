@@ -18,7 +18,7 @@ StepFunction1D::~StepFunction1D() {
 	// TODO Auto-generated destructor stub
 }
 
-double StepFunction1D::eval(const double *x) const {
+mydouble StepFunction1D::eval(const double *x) const {
 	if (falling_edge) {
 		if (x[0] < edge->getValue())
 			return amplitude->getValue();

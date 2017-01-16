@@ -37,6 +37,7 @@ public:
 	void setMinimizer(shared_ptr<ModelMinimizer> minimizer_);
 	void setModel(shared_ptr<Model> model_);
 
+	Data scanEstimatorSpace(const std::vector<std::string>& variable_names);
 	ModelFitResult Fit();
 
 };

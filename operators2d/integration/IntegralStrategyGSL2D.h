@@ -35,7 +35,7 @@ public:
   unsigned int determineOptimalCallNumber(Model2D *model2d,
       const std::vector<DataStructs::DimensionRange> &ranges, double precision);
 
-  double Integral(Model2D *model2d,
-      const std::vector<DataStructs::DimensionRange> &ranges, double precision);
+  mydouble Integral(Model2D *model2d,
+      const std::vector<DataStructs::DimensionRange> &ranges, mydouble precision);
 };
 #endif /* INTEGRALSTRATEGYGSL2D_H_ */

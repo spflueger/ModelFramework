@@ -33,25 +33,25 @@ void GaussianModel2D::initModelParameters() {
   gauss_amplitude->setParameterFixed(true);
 }
 
-double GaussianModel2D::eval(const double *x) const {
+mydouble GaussianModel2D::eval(const double *x) const {
   // see wikipedia definition
 
-  double rho_factor = (1.0 - std::pow(gauss_rho->getValue(), 2));
-  double one_over_sigma_var1 = 1.0 / gauss_sigma_var1->getValue();
-  double one_over_sigma_var2 = 1.0 / gauss_sigma_var2->getValue();
+  mydouble rho_factor = (1.0 - std::pow(gauss_rho->getValue(), 2));
+  mydouble one_over_sigma_var1 = 1.0 / gauss_sigma_var1->getValue();
+  mydouble one_over_sigma_var2 = 1.0 / gauss_sigma_var2->getValue();
 
-  double xval = (x[0] - gauss_mean_var1->getValue()) * one_over_sigma_var1;
-  double yval = (x[1] - gauss_mean_var2->getValue()) * one_over_sigma_var2;
+  mydouble xval = one_over_sigma_var1 * (x[0] - gauss_mean_var1->getValue());
+  mydouble yval = one_over_sigma_var2 * (x[1] - gauss_mean_var2->getValue());
 
-  double normalization = 0.5 * one_over_sigma_var1 * one_over_sigma_var2
+  mydouble normalization = 0.5 * one_over_sigma_var1 * one_over_sigma_var2
       / (M_PI * sqrt(rho_factor));
 
-  double exp_value = exp(
+  mydouble exp_value = exp(
       -0.5 / rho_factor
-          * (std::pow(xval, 2) + std::pow(yval, 2)
+          * (xval*xval + yval*yval
               - 2.0 * gauss_rho->getValue() * xval * yval));
 
-  return gauss_amplitude->getValue() * normalization * exp_value;
+  return normalization * exp_value * gauss_amplitude->getValue();
 }
 
 void GaussianModel2D::updateDomain() {

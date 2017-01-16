@@ -20,11 +20,11 @@ void ProductModel2D::initModelParameters() {
 
 }
 
-double ProductModel2D::eval(const double *x) const {
-  double result1(first->evaluate(x));
+mydouble ProductModel2D::eval(const double *x) const {
+  mydouble result1(first->evaluate(x));
   if (result1 == 0.0)
     return 0.0;
-  double result2(second->evaluate(x));
+  mydouble result2(second->evaluate(x));
   if (result2 == 0.0)
     return 0.0;
   return result1 * result2;

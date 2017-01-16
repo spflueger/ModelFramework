@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.6)
 
 project(ModelFramework)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++0x -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++0x -fopenmp -Wall")
 
 set(INCLUDE_DIRECTORIES
   ./
@@ -19,7 +19,7 @@ set(LINK_DIRECTORIES
   $ENV{CUBA_ROOT}/lib
 )
 link_directories(${LINK_DIRECTORIES})
-set(LINK_LIBS Core Hist Gpad Graf gsl gslcblas boost_thread boost_filesystem boost_system)
+set(LINK_LIBS Core Hist Gpad Graf gsl gslcblas boost_thread boost_filesystem boost_system) 
 
 
 file(GLOB_RECURSE SRCS ./*.cxx)

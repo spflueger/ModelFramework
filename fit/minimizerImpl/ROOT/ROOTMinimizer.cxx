@@ -14,11 +14,12 @@
 ROOTMinimizer::ROOTMinimizer() {
 	std::cout << "Initializing Minuit Minimizer..." << std::endl;
 
+	//min = ROOT::Math::Factory::CreateMinimizer("GSLMultiMin", "BFGS2");
 	min = ROOT::Math::Factory::CreateMinimizer("Minuit2", "Migrad");
 	// set tolerance , etc...
 	min->SetMaxFunctionCalls(100000);
 	min->SetMaxIterations(1000);
-	min->SetTolerance(10.0);
+	//min->SetTolerance(10.0);
   //min->SetPrecision(1e-2);
 	min->SetPrintLevel(5);
 }
@@ -66,7 +67,7 @@ int ROOTMinimizer::minimize() {
 	// Set the free variables to be minimized!
 	for (unsigned int i = 0; i < control_parameter->getParameterList().size(); i++) {
 		double stepsize = TMath::Abs(
-				0.5 * control_parameter->getParameterList()[i].value);
+				0.2 * control_parameter->getParameterList()[i].value);
 		if (0.0 == control_parameter->getParameterList()[i].value)
 			stepsize = 0.1;
 		min->SetVariable(

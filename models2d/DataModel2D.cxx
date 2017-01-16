@@ -265,7 +265,7 @@ double DataModel2D::evaluateLinear(const double *x) const {
   return value;
 }
 
-double DataModel2D::eval(const double *x) const {
+mydouble DataModel2D::eval(const double *x) const {
   double shifted_x[2];
   shifted_x[0] = x[0] - offset_x->getValue();
   shifted_x[1] = x[1] - offset_y->getValue();

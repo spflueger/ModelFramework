@@ -17,7 +17,7 @@
 
 ModelEstimator::ModelEstimator() :
     free_parameters(), data(), fit_model(), estimator_options(), mtx(), nthreads(
-        1) {
+        1), initial_estimator_value(0.0) {
 }
 
 ModelEstimator::~ModelEstimator() {
@@ -145,32 +145,57 @@ void ModelEstimator::applyEstimatorOptions(
     const EstimatorOptions &estimator_options_) {
   estimator_options = estimator_options_;
 
+  double combined_inner_radius_square(0.0);
+  double combined_outer_radius_square(0.0);
+  bool combined_fit_range_type(false);
+  if (data->getDimension() > 1 && estimator_options.getFitRangeX().is_active
+      && estimator_options.getFitRangeY().is_active
+      && estimator_options.getFitRangeX() == estimator_options.getFitRangeY()) {
+    combined_fit_range_type = true;
+    combined_inner_radius_square = std::pow(
+        estimator_options.getFitRangeX().range_low, 2);
+    combined_outer_radius_square = std::pow(
+        estimator_options.getFitRangeX().range_high, 2);
+  }
+
   std::vector<DataPointProxy> &datapoints = data->getData();
   for (unsigned int i = 0; i < datapoints.size(); i++) {
     if (datapoints[i].isBinnedDataPoint()) {
       shared_ptr<DataStructs::binned_data_point> data_point =
           datapoints[i].getBinnedDataPoint();
       // check fit ranges
-      if (data->getDimension() > 0
-          && estimator_options.getFitRangeX().is_active) {
-        if (data_point->bin_center_value[0]
-            < estimator_options.getFitRangeX().range_low
-            || data_point->bin_center_value[0]
-                > estimator_options.getFitRangeX().range_high) {
+      if (combined_fit_range_type) {
+        double data_point_radius_squared(
+            std::pow(data_point->bin_center_value[0], 2)
+                + std::pow(data_point->bin_center_value[1], 2));
+        if (data_point_radius_squared < combined_inner_radius_square
+            || data_point_radius_squared > combined_outer_radius_square) {
           datapoints[i].setPointUsed(false);
           continue;
         }
-        if (data->getDimension() > 1
-            && estimator_options.getFitRangeY().is_active) {
+      }
+      else {
+        if (data->getDimension() > 0
+            && estimator_options.getFitRangeX().is_active) {
           if (data_point->bin_center_value[0]
-              < estimator_options.getFitRangeY().range_low
+              < estimator_options.getFitRangeX().range_low
               || data_point->bin_center_value[0]
-                  > estimator_options.getFitRangeY().range_high) {
+                  > estimator_options.getFitRangeX().range_high) {
             datapoints[i].setPointUsed(false);
             continue;
           }
+          if (data->getDimension() > 1
+              && estimator_options.getFitRangeY().is_active) {
+            if (data_point->bin_center_value[1]
+                < estimator_options.getFitRangeY().range_low
+                || data_point->bin_center_value[1]
+                    > estimator_options.getFitRangeY().range_high) {
+              datapoints[i].setPointUsed(false);
+              continue;
+            }
+          }
+          datapoints[i].setPointUsed(true);
         }
-        datapoints[i].setPointUsed(true);
       }
       if (estimator_options.isWithIntegralScaling()) {
         if (fit_model.get()) {
@@ -212,6 +237,10 @@ void ModelEstimator::applyEstimatorOptions(
 
     }
   }
+}
+
+void ModelEstimator::setInitialEstimatorValue(double initial_estimator_value_) {
+  initial_estimator_value = initial_estimator_value_;
 }
 
 double ModelEstimator::getLastEstimatorValue() const {
@@ -278,6 +307,22 @@ double ModelEstimator::evaluate(const double *par) {
   else {
     estimator_value = eval(data);
   }
+  std::cout<<"initial estimator value: "<<initial_estimator_value<<std::endl;
+  estimator_value -= initial_estimator_value;
+
+  std::cout<<"estimator change:\n";
+  std::cout<<"current estimator value: "<<estimator_value<<std::endl;
+  std::cout<<"previous estimator value: "<<last_estimator_value<<std::endl;
+  std::cout<<"rel diff: "<<std::abs((estimator_value-last_estimator_value)/estimator_value)<<std::endl;
+
+  std::cout<<"parameters:\n";
+  unsigned int counter(0);
+  for (std::map<std::pair<std::string, std::string>, shared_ptr<ModelPar>,
+      ModelStructs::stringpair_comp>::iterator it = free_parameters.begin();
+      it != free_parameters.end(); it++) {
+    std::cout<<it->first.first<<":"<<it->first.second<<": "<<par[counter]<<std::endl;
+    ++counter;
+  } 
 
   last_estimator_value = estimator_value;
   return estimator_value;
