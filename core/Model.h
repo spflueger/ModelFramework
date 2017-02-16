@@ -15,8 +15,6 @@
 #include <set>
 #include <string>
 
-using mydouble = long double;
-
 /**
  * This defines the abstract structure of a Model.
  * In principle a model should generate the model parameters itself, and be able
@@ -43,9 +41,9 @@ private:
 protected:
 	// certain operations are totally equivalent for the 1d and 2d case
 	// define these here
-	double multiply(shared_ptr<Model> m1, shared_ptr<Model> m2, const double *x) const;
+	mydouble multiply(shared_ptr<Model> m1, shared_ptr<Model> m2, const mydouble *x) const;
 
-	double add(shared_ptr<Model> m1, shared_ptr<Model> m2, const double *x) const;
+	mydouble add(shared_ptr<Model> m1, shared_ptr<Model> m2, const mydouble *x) const;
 
 	void addModelToList(shared_ptr<Model> model);
 
@@ -56,16 +54,16 @@ public:
 	Model(std::string name_, unsigned int dimension_);
 	virtual ~Model();
 
-	void executeParametrizationModels(const double *x);
+	void executeParametrizationModels(const mydouble *x);
 
 	/**
 	 * Called by the #evaluate() function and actually does an evaluation of
 	 * this model with the given parameters. Has to be overwritten by any
 	 * derived class.
 	 */
-	virtual mydouble eval(const double *x) const =0;
+	virtual mydouble eval(const mydouble *x) const =0;
 
-	virtual std::pair<double, double> getUncertaincy(const double *x) const;
+	virtual std::pair<mydouble, mydouble> getUncertaincy(const mydouble *x) const;
 
 	/**
 	 * This function will be called by the fitter when an evaluation at a certain
@@ -73,7 +71,7 @@ public:
 	 * the parameter set connected to this set. Afterwards the normal evaluation
 	 * function of the Model is called (see #eval())
 	 */
-	mydouble evaluate(const double *x);
+	mydouble evaluate(const mydouble *x);
 
 	virtual mydouble Integral(const std::vector<DataStructs::DimensionRange> &ranges
 			, mydouble precision) =0;
@@ -118,6 +116,8 @@ public:
 	 * #ModelFitInterface).
 	 */
 	void updateModel();
+
+	void setParametersUnmodified();
 
 	/**
 	 * Interface for updating the domain of the model, which is useful/ a

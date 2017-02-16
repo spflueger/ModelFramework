@@ -19,7 +19,7 @@ class ExponentialModel1D: public Model1D {
     ExponentialModel1D(std::string name_);
     virtual ~ExponentialModel1D();
 
-    mydouble eval(const double *x) const;
+    mydouble eval(const mydouble *x) const;
 
     void initModelParameters();
 

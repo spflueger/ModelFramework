@@ -20,7 +20,7 @@ void ProductModel2D::initModelParameters() {
 
 }
 
-mydouble ProductModel2D::eval(const double *x) const {
+mydouble ProductModel2D::eval(const mydouble *x) const {
   mydouble result1(first->evaluate(x));
   if (result1 == 0.0)
     return 0.0;
@@ -30,8 +30,8 @@ mydouble ProductModel2D::eval(const double *x) const {
   return result1 * result2;
 }
 
-std::pair<double, double> ProductModel2D::getUncertaincy(
-    const double *x) const {
+std::pair<mydouble, mydouble> ProductModel2D::getUncertaincy(
+    const mydouble *x) const {
   return std::make_pair(
       first->getUncertaincy(x).first * second->eval(x)
           + second->getUncertaincy(x).first * first->eval(x),

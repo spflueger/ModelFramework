@@ -32,8 +32,8 @@ void PolynomialModel1D::initModelParameters() {
 	}
 }
 
-mydouble PolynomialModel1D::eval(const double *x) const {
-	double val = 0.0;
+mydouble PolynomialModel1D::eval(const mydouble *x) const {
+  mydouble val = 0.0;
 	for (unsigned int i = 0; i < poly_factors.size(); i++) {
 		val += poly_factors[i]->getValue() * std::pow(x[0], static_cast<int>(i));
 	}
@@ -41,5 +41,5 @@ mydouble PolynomialModel1D::eval(const double *x) const {
 }
 
 void PolynomialModel1D::updateDomain() {
-	setDomain(std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
+	setDomain(std::numeric_limits<mydouble>::min(), std::numeric_limits<mydouble>::max());
 }

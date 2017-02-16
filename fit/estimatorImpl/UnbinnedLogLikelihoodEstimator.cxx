@@ -15,11 +15,11 @@ UnbinnedLogLikelihoodEstimator::~UnbinnedLogLikelihoodEstimator() {
 	// TODO Auto-generated destructor stub
 }
 
-double UnbinnedLogLikelihoodEstimator::eval(shared_ptr<Data> data) {
+mydouble UnbinnedLogLikelihoodEstimator::eval(shared_ptr<Data> data) {
 	//calculate loglikelihood
 	// poisson sum_i(y_i * ln (f(x_i)) - f(x_i))
 
-	double loglikelihood = 0.0;
+	mydouble loglikelihood = 0.0;
 
 	std::vector<DataPointProxy> &data_points = data->getData();
 	// loop over data
@@ -27,7 +27,7 @@ double UnbinnedLogLikelihoodEstimator::eval(shared_ptr<Data> data) {
 		shared_ptr<DataStructs::unbinned_data_point> data_point;
 		if (data_points[i].isPointUsed()) {
 			data_point = data_points[i].getUnbinnedDataPoint();
-			double model_value = fit_model->evaluate(data_point->x);
+			mydouble model_value = fit_model->evaluate(data_point->x);
 			// if model is zero at this point should be removed otherwise log(0)!!!
 			if (model_value <= 0.0)
 				continue;
@@ -42,7 +42,7 @@ double UnbinnedLogLikelihoodEstimator::eval(shared_ptr<Data> data) {
 	int_ranges.push_back(estimator_options.getFitRangeX());
 	int_ranges.push_back(estimator_options.getFitRangeY());
 
-	double integral = fit_model->Integral(int_ranges, 1e-3);
+	mydouble integral = fit_model->Integral(int_ranges, 1e-3);
 	std::cout << "calculated!" << std::endl;
 	std::cout << data_points.size() << std::endl;
 	/*if (!skip_integral) {

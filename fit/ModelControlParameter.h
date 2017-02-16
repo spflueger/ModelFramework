@@ -9,6 +9,7 @@
 #define MODELCONTROLPARAMETER_H_
 
 #include "core/ModelStructs.h"
+#include "ProjectWideSettings.h"
 
 #include <vector>
 
@@ -21,7 +22,7 @@ public:
 	ModelControlParameter();
 	virtual ~ModelControlParameter();
 
-	virtual double evaluate(const double *pars) =0;
+	virtual mydouble evaluate(const mydouble *pars) =0;
 
 	vector<ModelStructs::minimization_parameter>& getParameterList();
 };

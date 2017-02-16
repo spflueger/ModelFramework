@@ -5,7 +5,7 @@
 
 class UnbinnedLogLikelihoodEstimator: public ModelEstimator {
 private:
-	double last_integral;
+	mydouble last_integral;
 	bool skip_integral;
 
 	int integral_skip_counter;
@@ -15,7 +15,7 @@ public:
 	virtual ~UnbinnedLogLikelihoodEstimator();
 
 	// the likelihood function
-	double eval(shared_ptr<Data> data);
+	mydouble eval(shared_ptr<Data> data);
 };
 
 #endif /* UNBINNEDLOGLIKELIHOODESTIMATOR_H_ */

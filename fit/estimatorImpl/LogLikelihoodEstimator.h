@@ -10,7 +10,7 @@ public:
 	virtual ~LogLikelihoodEstimator();
 
 	// the likelihood function
-	double eval(shared_ptr<Data> data);
+	mydouble eval(shared_ptr<Data> data);
 };
 
 #endif /* LOGLIKELIHOODESTIMATOR_H_ */

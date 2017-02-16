@@ -24,15 +24,15 @@ void ExponentialModel1D::initModelParameters() {
   exp_factor = getModelParameterSet().addModelParameter("exp_exp_factor");
 }
 
-mydouble ExponentialModel1D::eval(const double *x) const {
+mydouble ExponentialModel1D::eval(const mydouble *x) const {
   return amplitude->getValue() * exp(exp_factor->getValue() * x[0]);
 }
 
 void ExponentialModel1D::updateDomain() {
   if (exp_factor->getValue() > 0.0)
     setDomain(std::log(1e-06 / amplitude->getValue()) / exp_factor->getValue(),
-        std::numeric_limits<double>::max());
+        std::numeric_limits<mydouble>::max());
   else
-    setDomain(std::numeric_limits<double>::min(),
+    setDomain(std::numeric_limits<mydouble>::min(),
         std::log(1e-06 / amplitude->getValue()) / exp_factor->getValue());
 }

@@ -22,19 +22,19 @@ mydouble Model1D::Integral(const std::vector<DataStructs::DimensionRange> &range
 			ranges[0].range_high, precision);
 }
 
-double Model1D::getDomainRange() {
+mydouble Model1D::getDomainRange() {
 	return domain_bounds.second - domain_bounds.first;
 }
 
-double Model1D::getDomainLowerBound() {
+mydouble Model1D::getDomainLowerBound() {
 	return domain_bounds.first;
 }
 
-const std::pair<double, double>& Model1D::getDomain() const {
+const std::pair<mydouble, mydouble>& Model1D::getDomain() const {
 	return domain_bounds;
 }
 
-void Model1D::setDomain(double lower_bound, double upper_bound) {
+void Model1D::setDomain(mydouble lower_bound, mydouble upper_bound) {
 	domain_bounds.first = lower_bound;
 	domain_bounds.second = upper_bound;
 }

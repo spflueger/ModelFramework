@@ -12,7 +12,7 @@ LogLikelihoodEstimator::~LogLikelihoodEstimator() {
   // TODO Auto-generated destructor stub
 }
 
-double LogLikelihoodEstimator::eval(shared_ptr<Data> data) {
+mydouble LogLikelihoodEstimator::eval(shared_ptr<Data> data) {
   //calculate loglikelihood
   // poisson sum_i(y_i * ln (f(x_i)) - f(x_i))
 
@@ -64,6 +64,6 @@ double LogLikelihoodEstimator::eval(shared_ptr<Data> data) {
   if (deltas.size() == 2)
     sum_value = deltas[0] + deltas[1];
 
-  return (double) sum_value;
+  return sum_value;
 }
 

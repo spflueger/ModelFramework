@@ -82,13 +82,13 @@ public:
 	 */
 	void addModelParameterSet(ModelParSet& addition);
 
-	int setModelParameterValue(const std::string &name_, double value_);
+	int setModelParameterValue(const std::string &name_, mydouble value_);
 
 	/**
 	 * Used by the parametrizations to get a set of parameters on which the
 	 * parametrization depends on.
 	 */
-	const double& getModelParameterValue(const std::string &name_) const;
+	const mydouble& getModelParameterValue(const std::string &name_) const;
 
 	shared_ptr<ModelPar> getModelParameter(
 			const std::pair<std::string, std::string> &name_);

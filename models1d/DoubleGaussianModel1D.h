@@ -12,7 +12,7 @@
 
 class DoubleGaussianModel1D: public Model1D {
 private:
-	double num_sigmas;
+	mydouble num_sigmas;
 	/*shared_ptr<ModelPar> gauss_mean_narrow;
 	 shared_ptr<ModelPar> gauss_mean_wide;
 	 shared_ptr<ModelPar> gauss_sigma_narrow;
@@ -32,7 +32,7 @@ public:
 
 	void initModelParameters();
 
-	mydouble eval(const double *x) const;
+	mydouble eval(const mydouble *x) const;
 
 	void updateDomain();
 };

@@ -14,7 +14,7 @@ class IntegralStrategy1D;
 
 class Model1D: public Model {
 private:
-	std::pair<double, double> domain_bounds;
+	std::pair<mydouble, mydouble> domain_bounds;
 
   shared_ptr<IntegralStrategy1D> integral_strategy;
 
@@ -23,10 +23,10 @@ public:
   virtual ~Model1D();
 
   mydouble Integral(const std::vector<DataStructs::DimensionRange> &ranges, mydouble precision);
-  double getDomainRange();
-  double getDomainLowerBound();
-  const std::pair<double, double>& getDomain() const;
-  void setDomain(double lower_bound, double upper_bound);
+  mydouble getDomainRange();
+  mydouble getDomainLowerBound();
+  const std::pair<mydouble, mydouble>& getDomain() const;
+  void setDomain(mydouble lower_bound, mydouble upper_bound);
 };
 
 #endif /* MODEL1D_H_ */

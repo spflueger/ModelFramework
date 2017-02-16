@@ -16,7 +16,7 @@ public:
 	virtual ~Chi2Estimator();
 
 	// the chisquare function
-	double eval(shared_ptr<Data> data);
+	mydouble eval(shared_ptr<Data> data);
 };
 
 #endif /* CHI2ESTIMATOR_H_ */

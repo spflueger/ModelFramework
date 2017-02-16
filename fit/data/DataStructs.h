@@ -10,29 +10,31 @@
 
 #include <string>
 
+#include "ProjectWideSettings.h"
+
 namespace DataStructs {
 
 // binned data structure
 struct binned_data_point {
-	double bin_center_value[2]; // variables
-	double bin_widths[2];
-	double z;
-	double z_error;
-	double scale;
+	mydouble bin_center_value[2]; // variables
+	mydouble bin_widths[2];
+	mydouble z;
+	mydouble z_error;
+	mydouble scale;
 	binned_data_point() :
 			z(0.0), z_error(0.0), scale(1.0) {
 	}
 };
 
 struct unbinned_data_point {
-	double x[2]; // variables
+	mydouble x[2]; // variables
 };
 
 struct DimensionRange {
 	// lower bound on this axis/dimension
-	double range_low;
+  mydouble range_low;
 	// upper bound on this axis/dimension
-	double range_high;
+  mydouble range_high;
 
 	bool is_active;
 
@@ -40,19 +42,19 @@ struct DimensionRange {
 			range_low(0.0), range_high(0.0), is_active(false) {
 	}
 
-	DimensionRange(double low, double high) :
+	DimensionRange(mydouble low, mydouble high) :
 			range_low(low), range_high(high), is_active(true) {
 	}
 
-	double getDimensionLength() const {
+	mydouble getDimensionLength() const {
 		return (range_high - range_low);
 	}
 
-	double getDimensionMean() const {
+	mydouble getDimensionMean() const {
 		return (range_high + range_low) / 2.0;
 	}
 
-	bool isDataWithinRange(double data_value) const {
+	bool isDataWithinRange(mydouble data_value) const {
 		if (data_value < range_low) {
 			return false;
 		}

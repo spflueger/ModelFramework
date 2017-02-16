@@ -24,13 +24,13 @@ void SmearingConvolutionModel1D::initModelParameters() {
 
 }
 
-mydouble SmearingConvolutionModel1D::eval(const double *x) const {
+mydouble SmearingConvolutionModel1D::eval(const mydouble *x) const {
 	// x[0] is the reconstructed value
-	double value = 0.0;
+  mydouble value = 0.0;
 	// first divide the domain of the first model (that should be smeared) into subintervals
-	double low = first->getDomain().first;
-	double high = first->getDomain().second;
-	double interval_width = first->getDomainRange() / divisions;
+  mydouble low = first->getDomain().first;
+  mydouble high = first->getDomain().second;
+  mydouble interval_width = first->getDomainRange() / divisions;
 
 	std::vector<DataStructs::DimensionRange> temp_range_first;
 	DataStructs::DimensionRange dr;
@@ -41,16 +41,16 @@ mydouble SmearingConvolutionModel1D::eval(const double *x) const {
 	//std::cout<<"x0: "<<x[0]<<std::endl;
 	// and loop over these invervals
 	for (unsigned int i = 0; i < divisions; i++) {
-		double interval_low = (low + interval_width * i);
+	  mydouble interval_low = (low + interval_width * i);
 		// check if the second model is in range for the current subinterval
 		// to reach the reconstructed value x[0]
-		double interval_center = interval_low + 0.5 * interval_width;
+	  mydouble interval_center = interval_low + 0.5 * interval_width;
 
 		second->evaluate(&interval_center); // this is to get the correct parametrization models activated
 		//second->getModelParameterSet().printInfo();
 
-		double smear_interval_center = x[0] - interval_center;
-		double smear_interval_low = smear_interval_center - 0.5 * interval_width;
+		mydouble smear_interval_center = x[0] - interval_center;
+		mydouble smear_interval_low = smear_interval_center - 0.5 * interval_width;
 
 		/*std::cout<<x[0]<<": "<<second->getDomain().first<<"-"<<second->getDomain().second<<std::endl;
 		 second->getModelParameterSet().printInfo();*/
@@ -67,12 +67,12 @@ mydouble SmearingConvolutionModel1D::eval(const double *x) const {
 		// integrate second (smearing) function in that smear interval range
 		temp_range_second[0].range_low = smear_interval_low;
 		temp_range_second[0].range_high = smear_interval_low + interval_width;
-		double int_second = second->Integral(temp_range_second, 1e-3);
+		mydouble int_second = second->Integral(temp_range_second, 1e-3);
 
 		// integrate second (smearing) function in that smear interval range
 		temp_range_first[0].range_low = interval_low;
 		temp_range_first[0].range_high = low + interval_width * (i + 1);
-		double int_first = first->Integral(temp_range_first, 1e-3);
+		mydouble int_first = first->Integral(temp_range_first, 1e-3);
 
 		value += int_first * int_second;
 	}

@@ -18,15 +18,15 @@ Model::~Model() {
 	// clear map of ModelPars
 }
 
-double Model::multiply(shared_ptr<Model> m1, shared_ptr<Model> m2,
-		const double *x) const {
+mydouble Model::multiply(shared_ptr<Model> m1, shared_ptr<Model> m2,
+		const mydouble *x) const {
 	if (m1->evaluate(x) == 0.0 || m2->evaluate(x) == 0.0)
 		return 0.0;
 	return m1->evaluate(x) * m2->evaluate(x);
 }
 
-double Model::add(shared_ptr<Model> m1, shared_ptr<Model> m2,
-		const double *x) const {
+mydouble Model::add(shared_ptr<Model> m1, shared_ptr<Model> m2,
+		const mydouble *x) const {
 	return m1->evaluate(x) + m2->evaluate(x);
 }
 
@@ -52,7 +52,7 @@ ModelParSet& Model::getModelParameterSet() {
 	return model_par_handler.getModelParameterSet();
 }
 
-void Model::executeParametrizationModels(const double *x) {
+void Model::executeParametrizationModels(const mydouble *x) {
 	//first call through all submodels of this model
 	for (unsigned int i = 0; i < submodel_list.size(); i++) {
 		/*	std::cout<<submodel_list[i]<<std::endl;
@@ -65,11 +65,11 @@ void Model::executeParametrizationModels(const double *x) {
 		updateDomain();
 }
 
-std::pair<double, double> Model::getUncertaincy(const double *x) const {
+std::pair<mydouble, mydouble> Model::getUncertaincy(const mydouble *x) const {
 	return std::make_pair(0.0, 0.0);
 }
 
-mydouble Model::evaluate(const double *x) {
+mydouble Model::evaluate(const mydouble *x) {
 	//executeParametrizationModels(x);
 	return eval(x);
 }
@@ -123,5 +123,15 @@ void Model::updateModel() {
 	model_par_handler.updateModelParameters();
 	// finally recalculate the domain of all models that construct this model
 	updateDomain();
+}
+
+void Model::setParametersUnmodified() {
+  // call update functions for all submodels
+  for (unsigned int i = 0; i < submodel_list.size(); i++) {
+    submodel_list[i]->setParametersUnmodified();
+  }
+  for(auto model_par : model_par_handler.getModelParameterSet().getModelParameterMap()) {
+    model_par.second->setModified(false);
+  }
 }
 

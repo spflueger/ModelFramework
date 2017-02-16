@@ -75,7 +75,7 @@ void ModelParSet::addModelParameter(shared_ptr<ModelPar> model_par) {
 }
 
 int ModelParSet::setModelParameterValue(const std::string &name_,
-		double value_) {
+    mydouble value_) {
 	if (modelParameterExists(name_)) {
 		model_par_map[std::make_pair(model_name, name_)]->setValue(value_);
 		return 0;
@@ -169,7 +169,7 @@ int ModelParSet::addModelParameters(ModelParSet &daughter_model_par_set) {
 	return num_pars_reassigned;
 }
 
-const double& ModelParSet::getModelParameterValue(
+const mydouble& ModelParSet::getModelParameterValue(
 		const std::string &name_) const {
 	return model_par_map.at(std::make_pair(model_name, name_))->getValue();
 }

@@ -10,7 +10,7 @@ BoxModel2D::~BoxModel2D() {
 	// TODO Auto-generated destructor stub
 }
 
-mydouble BoxModel2D::eval(const double *x) const {
+mydouble BoxModel2D::eval(const mydouble *x) const {
 	if (x[0] >= lower_edge_var1->getValue() && x[0] <= upper_edge_var1->getValue()) {
 	  if (x[1] >= lower_edge_var2->getValue() && x[1] <= upper_edge_var2->getValue()) {
 			return amplitude->getValue();

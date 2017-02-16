@@ -24,15 +24,15 @@ void IntegralStrategyGSL2D::setMaximumNumberOfFunctionEvaluations(
 }
 
 unsigned int IntegralStrategyGSL2D::determineOptimalCallNumber(Model2D *model2d,
-    const std::vector<DataStructs::DimensionRange> &ranges, double precision) {
+    const std::vector<DataStructs::DimensionRange> &ranges, mydouble precision) {
   unsigned int num_calls = 2;
   current_model = model2d;
   //gsl_func_wrapper gsl_func(model2d);
 
   double result, error;
 
-  double xl[2] = { ranges[0].range_low, ranges[1].range_low };
-  double xu[2] = { ranges[0].range_high, ranges[1].range_high };
+  double xl[2] = { (double)ranges[0].range_low, (double)ranges[1].range_low };
+  double xu[2] = { (double)ranges[0].range_high, (double)ranges[1].range_high };
 
   gsl_rng *r = gsl_rng_alloc(T);
   gsl_monte_vegas_state *s = gsl_monte_vegas_alloc(2);
@@ -48,7 +48,7 @@ unsigned int IntegralStrategyGSL2D::determineOptimalCallNumber(Model2D *model2d,
       break;
     //if (fabs(gsl_monte_vegas_chisq(s) - 1.0) < 0.1)
     //  break;
-    if (fabs(error / result) < precision)
+    if (std::fabs(error / result) < (double)precision)
       break;
     if (max_calls < num_calls)
       break;

@@ -161,7 +161,7 @@ ParametrizationProxy ModelParameterHandler::getParametrizationProxyForModelParam
 	}
 }
 
-void ModelParameterHandler::executeParametrizationModels(const double *x) {
+void ModelParameterHandler::executeParametrizationModels(const mydouble *x) {
 	for (std::map<const shared_ptr<ModelPar>, ParametrizationProxy>::iterator it =
 			parametrizations.begin(); it != parametrizations.end(); it++) {
 		if (it->second.hasParametrizationModel()) {

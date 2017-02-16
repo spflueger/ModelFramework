@@ -19,9 +19,12 @@ private:
 
   static double gsl_func_wrapper(double *x, size_t dim, void *params) {
     Model2D *current_model_temp = current_model;
-    double value = current_model->eval(x);
+    mydouble xtemp[2];
+    xtemp[0] = (mydouble)x[0];
+    xtemp[1] = (mydouble)x[1];
+    mydouble value = current_model->eval(xtemp);
     current_model = current_model_temp;
-    return value;
+    return (double)value;
   }
 
 public:
@@ -33,7 +36,7 @@ public:
   void setMaximumNumberOfFunctionEvaluations(unsigned int max_calls_);
 
   unsigned int determineOptimalCallNumber(Model2D *model2d,
-      const std::vector<DataStructs::DimensionRange> &ranges, double precision);
+      const std::vector<DataStructs::DimensionRange> &ranges, mydouble precision);
 
   mydouble Integral(Model2D *model2d,
       const std::vector<DataStructs::DimensionRange> &ranges, mydouble precision);

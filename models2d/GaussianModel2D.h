@@ -12,7 +12,7 @@
 
 class GaussianModel2D: public Model2D {
 private:
-	double num_sigmas;
+	mydouble num_sigmas;
 	shared_ptr<ModelPar> gauss_sigma_var1;
 	shared_ptr<ModelPar> gauss_sigma_var2;
 	shared_ptr<ModelPar> gauss_mean_var1;
@@ -26,7 +26,7 @@ public:
 	 * (normal distribution).
 	 * @params name_ will be set as the name of this model. Make sure this will be unique!
 	 */
-	GaussianModel2D(std::string name_, double num_sigmas_ = 5.0);
+	GaussianModel2D(std::string name_, mydouble num_sigmas_ = 5.0);
 
 	virtual ~GaussianModel2D();
 
@@ -38,7 +38,7 @@ public:
 	 * @returns value of the response function at the specified theta value with
 	 * the given theta sigma
 	 */
-	mydouble eval(const double *x) const;
+	mydouble eval(const mydouble *x) const;
 
 	void updateDomain();
 };

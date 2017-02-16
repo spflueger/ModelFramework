@@ -19,17 +19,17 @@ IntegralStrategySR1D::~IntegralStrategySR1D() {
 	// TODO Auto-generated destructor stub
 }
 
-double IntegralStrategySR1D::Integral(Model1D *model1d, double xlow, double xhigh, double precision) {
+mydouble IntegralStrategySR1D::Integral(Model1D *model1d, mydouble xlow, mydouble xhigh, mydouble precision) {
 	// ok increase the number of divisions until precision is reached
 	unsigned int divisions = 0;
-	double current_precision = 0.0;
-	double val = 0.0;
-	double last_value = 0.0;
+	mydouble current_precision = 0.0;
+	mydouble val = 0.0;
+	mydouble last_value = 0.0;
 	do {
 		divisions++;
 		val = 0.0;
-		double x[3];
-		double division_width = (xhigh - xlow) / divisions;
+		mydouble x[3];
+		mydouble division_width = (xhigh - xlow) / divisions;
 		for (unsigned int i = 0; i < divisions; i++) {
 			x[0] = xlow + division_width * (1.0 * i);
 			x[1] = xlow + division_width * (1.0 * i + 0.5);

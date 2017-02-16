@@ -20,7 +20,7 @@ public:
 	ModelMinimizationControlParameter();
 	virtual ~ModelMinimizationControlParameter();
 
-  double evaluate(const double *pars);
+  mydouble evaluate(const mydouble *pars);
 };
 
 #endif /* MODELMINIMIZATIONCONTROLPARAMETER_H_ */

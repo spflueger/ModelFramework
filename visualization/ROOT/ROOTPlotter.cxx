@@ -34,9 +34,9 @@ TGraphAsymmErrors* ROOTPlotter::createGraphFromModel1D(shared_ptr<Model> model,
 		std::cout << "Error: not all parameters have been set!" << std::endl;
 	}
 
-	double stepsize = visualization_properties.getPlotRange().getDimensionLength()
+	mydouble stepsize = visualization_properties.getPlotRange().getDimensionLength()
 			/ visualization_properties.getEvaluations();
-	double x;
+	mydouble x;
 
 	for (unsigned int i = 0; i < visualization_properties.getEvaluations(); i++) {
 		x = visualization_properties.getPlotRange().range_low + stepsize * i;
@@ -66,13 +66,13 @@ TH2D* ROOTPlotter::createHistogramFromModel2D(shared_ptr<Model> model,
 		std::cout << "Error: not all parameters have been set!" << std::endl;
 	}
 
-	double stepsize_x =
+	mydouble stepsize_x =
 			visualization_properties.first.getPlotRange().getDimensionLength()
 					/ visualization_properties.first.getEvaluations();
-	double stepsize_y =
+	mydouble stepsize_y =
 			visualization_properties.second.getPlotRange().getDimensionLength()
 					/ visualization_properties.second.getEvaluations();
-	double x[2];
+	mydouble x[2];
 
 	for (unsigned int ix = 0;
 			ix < visualization_properties.first.getEvaluations(); ix++) {
@@ -100,8 +100,8 @@ TH2D* ROOTPlotter::createHistogramFromModel2D(shared_ptr<Model> model,
 
 			 hist->Fill(x[0], x[1], integral);*/
 
-			double value = model->evaluate(x);
-			if (std::fabs(value) > std::numeric_limits<double>::min())
+			mydouble value = model->evaluate(x);
+			if (std::fabs(value) > std::numeric_limits<mydouble>::min())
 				hist->Fill(x[0], x[1],
 						model->evaluate(x)
 								* visualization_properties.first.getBinningFactor()

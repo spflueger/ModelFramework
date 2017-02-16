@@ -17,9 +17,9 @@ ROOTMinimizer::ROOTMinimizer() {
 	//min = ROOT::Math::Factory::CreateMinimizer("GSLMultiMin", "BFGS2");
 	min = ROOT::Math::Factory::CreateMinimizer("Minuit2", "Migrad");
 	// set tolerance , etc...
-	min->SetMaxFunctionCalls(100000);
-	min->SetMaxIterations(1000);
-	//min->SetTolerance(10.0);
+	min->SetMaxFunctionCalls(100);
+	min->SetMaxIterations(1);
+	//min->SetTolerance(1.0); // default: 0.01
   //min->SetPrecision(1e-2);
 	min->SetPrintLevel(5);
 }
@@ -31,6 +31,16 @@ ROOTMinimizer::~ROOTMinimizer() {
 const ROOT::Math::Minimizer* ROOTMinimizer::getROOTMinimizer() const {
 	return min;
 }
+
+double ROOTMinimizer::root_func_wrapper(const double *x) {
+  unsigned int size(control_parameter->getParameterList().size());
+  mydouble xtemp[size];
+  for(unsigned int i = 0; i < size; ++i) {
+    xtemp[i] = (mydouble)x[i];
+  }
+  return (double)control_parameter->evaluate(xtemp);
+}
+
 
 ModelFitResult ROOTMinimizer::createModelFitResult() const {
 	ModelFitResult fit_result;
@@ -60,7 +70,7 @@ int ROOTMinimizer::minimize() {
 	// create function wrapper for minmizer  a IMultiGenFunction type
 	std::cout << "Number of free parameters in fit: "
 			<< control_parameter->getParameterList().size() << std::endl;
-	ROOT::Math::Functor fc(control_parameter.get(), &ModelControlParameter::evaluate,
+	ROOT::Math::Functor fc(this, &ROOTMinimizer::root_func_wrapper,
 			control_parameter->getParameterList().size());
 	min->SetFunction(fc);
 

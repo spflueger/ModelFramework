@@ -19,7 +19,7 @@ class PolynomialModel1D: public Model1D {
     PolynomialModel1D(std::string name_, unsigned int order_);
     virtual ~PolynomialModel1D();
 
-    mydouble eval(const double *x) const;
+    mydouble eval(const mydouble *x) const;
 
     void initModelParameters();
 

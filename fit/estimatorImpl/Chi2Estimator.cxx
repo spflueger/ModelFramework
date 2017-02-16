@@ -19,10 +19,10 @@ Chi2Estimator::~Chi2Estimator() {
 	// TODO Auto-generated destructor stub
 }
 
-double Chi2Estimator::eval(shared_ptr<Data> data) {
+mydouble Chi2Estimator::eval(shared_ptr<Data> data) {
 	//calculate chisquare
-	double chisq = 0.0;
-	double delta;
+	mydouble chisq = 0.0;
+	mydouble delta;
 
 	std::vector<DataPointProxy> &data_points = data->getData();
 	// loop over data
@@ -35,10 +35,10 @@ double Chi2Estimator::eval(shared_ptr<Data> data) {
 							- data->getBinningFactor()
 									* fit_model->evaluate(
 											data_point->bin_center_value));
-			double weightsquare(1.0);
+			mydouble weightsquare(1.0);
 			if(data_point->z_error != 0.0)
 			  weightsquare = data_point->z_error * data_point->z_error;
-			double modelweight = 0.0;
+			mydouble modelweight = 0.0;
 		/*	if (delta > 0.0) {
 				modelweight += data->getBinningFactor()
 						* fit_model->getUncertaincy(

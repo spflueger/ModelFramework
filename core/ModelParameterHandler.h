@@ -63,7 +63,7 @@ public:
 	ParametrizationProxy getParametrizationProxyForModelParameter(
 			std::string name_);
 
-	void executeParametrizationModels(const double *x);
+	void executeParametrizationModels(const mydouble *x);
 
 	/**
 	 * This method updates the model parameters that are set via

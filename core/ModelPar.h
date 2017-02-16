@@ -12,14 +12,16 @@
 #include <set>
 
 #include "SharedPtr.h"
+#include "ProjectWideSettings.h"
 
 class ModelPar {
 private:
   std::string name;
-  double value;
-  double lower_bound;
-  double upper_bound;
+  mydouble value;
+  mydouble lower_bound;
+  mydouble upper_bound;
   bool fixed, superior, set, locked, bounded;
+  bool modified;
 
   /**
    * This stores the connection to other ModelPar's. Once this ModelPar is
@@ -32,7 +34,7 @@ private:
 
 public:
   ModelPar();
-  ModelPar(std::string name_, double value_, bool fixed_);
+  ModelPar(std::string name_, mydouble value_, bool fixed_);
 
   const std::string& getName() const;
 
@@ -41,22 +43,23 @@ public:
   bool isParameterFixed() const;
   void setParameterFixed(bool fixed_);
 
-  void setParameterBounds(double lower_bound_, double upper_bound_);
+  void setParameterBounds(mydouble lower_bound_, mydouble upper_bound_);
 
   /**
    * Sets the value of this model parameter. Note that only by using this function
    * the set flag will be switched to true, which is a requirement for the fit.
    * Hence this method has to be used by the model parametrizations.
    */
-  void setValue(double value_);
-  const double& getValue() const;
+  void setValue(mydouble value_);
+  const mydouble& getValue() const;
 
   bool isSet() const;
   bool isConnected() const;
   bool isSuperior() const;
+  bool isModified() const;
 
   void setSuperior(bool superior_);
-
+  void setModified(bool modified_);
   /**
    * This function adds a dependence of this model parameter on the specified
    * parameter. Once the dependent parameter changed this model parameter will

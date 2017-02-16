@@ -7,7 +7,6 @@
 
 #include "ModelFitFacade.h"
 #include "fit/data/Data.h"
-
 #include <iostream>
 
 using std::cout;
@@ -97,7 +96,7 @@ Data ModelFitFacade::scanEstimatorSpace(
   std::cout << "Now performing actual scan!!!!\n";
   // find the correct parameters first
   auto free_params = model->getModelParameterSet().getFreeModelParameters();
-  double params[free_params.size()];
+  mydouble params[free_params.size()];
   unsigned int index_1(0);
   unsigned int index_2(0);
   unsigned int counter(0);
@@ -110,11 +109,11 @@ Data ModelFitFacade::scanEstimatorSpace(
     ++counter;
   }
   int num_bins = 40;
-  double scanwidth(0.3);
-  double x_center = params[index_1];
-  double y_center = params[index_2];
-  double stepsize_x = x_center * scanwidth / num_bins;
-  double stepsize_y = y_center * scanwidth / num_bins;
+  mydouble scanwidth(0.5L);
+  mydouble x_center = params[index_1];
+  mydouble y_center = params[index_2];
+  mydouble stepsize_x = x_center * scanwidth / num_bins;
+  mydouble stepsize_y = y_center * scanwidth / num_bins;
 
   DataPointProxy dpp;
   for (int ix = -num_bins; ix < num_bins + 1; ++ix) {
@@ -173,17 +172,40 @@ ModelFitResult ModelFitFacade::Fit() {
 
   minimizer->setControlParameter(estimator);
 
-  auto const& free_params = model->getModelParameterSet().getFreeModelParameters();
-  std::vector<double> pars;
-
+  auto const& free_params =
+      model->getModelParameterSet().getFreeModelParameters();
+  std::cout << free_params.size() << " free parameters in fit\n";
+  std::vector<mydouble> pars;
   for (auto const &param : free_params) {
     pars.push_back(param.second->getValue());
   }
-  estimator->setInitialEstimatorValue(estimator->evaluate(&pars[0]));
 
-  // call minimization procedure
-  int fit_status = minimizer->doMinimization();
+  int fit_status(-1);
+  // this try loop is done to keep normalizing the estimator space to get better numerical stability
+  for (unsigned int trys = 0; trys < 20; ++trys) {
+    estimator->setInitialEstimatorValue(estimator->evaluate(&pars[0]));
 
+    // call minimization procedure
+    fit_status = minimizer->doMinimization();
+
+    std::cout << "try: " << trys << " finished with fit status: " << fit_status
+        << std::endl;
+    // if fit was successful this try was successful
+    if (fit_status == 0)
+      break;
+    else {
+      // if not successful use last parameters as new start value and repeat!
+      unsigned int counter(0);
+      auto &parameters = minimizer->getControlParameter()->getParameterList();
+      for (auto const &param : free_params) {
+        parameters[counter].value = param.second->getValue();
+        pars[counter]= param.second->getValue();
+        ++counter;
+      }
+      //reset initial estimator value
+      estimator->setInitialEstimatorValue(0.0);
+    }
+  }
   if (fit_status) {
     cout << "ERROR: Problem while performing fit. Returning NULL pointer!"
         << endl;

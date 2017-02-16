@@ -22,7 +22,7 @@ public:
 
 	void initModelParameters();
 
-	mydouble eval(const double *x) const;
+	mydouble eval(const mydouble *x) const;
 
 	void updateDomain();
 };

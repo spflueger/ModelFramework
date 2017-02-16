@@ -21,12 +21,12 @@ void ProductModel1D::initModelParameters() {
 
 }
 
-mydouble ProductModel1D::eval(const double *x) const {
+mydouble ProductModel1D::eval(const mydouble *x) const {
 	return multiply(first, second, x);
 }
 
-std::pair<double, double> ProductModel1D::getUncertaincy(
-		const double *x) const {
+std::pair<mydouble, mydouble> ProductModel1D::getUncertaincy(
+		const mydouble *x) const {
 	return std::make_pair(
 			first->getUncertaincy(x).first * second->eval(x)
 					+ second->getUncertaincy(x).first * first->eval(x),

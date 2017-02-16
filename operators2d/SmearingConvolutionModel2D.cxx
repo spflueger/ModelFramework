@@ -18,18 +18,18 @@ void SmearingConvolutionModel2D::initModelParameters() {
 
 }
 
-mydouble SmearingConvolutionModel2D::eval(const double *x) const {
+mydouble SmearingConvolutionModel2D::eval(const mydouble *x) const {
 	// x[0]/x[1] are the reconstructed values
 	//std::cout<<x[0]<<" : "<<x[1]<<std::endl;
-	double value = 0.0;
+  mydouble value = 0.0;
 	// first divide the domain of the first model (that should be smeared) into subintervals
-	double division_width_var1 = first->getVar1DomainRange() / divisions_var1;
-	double range_low_var1 = first->getVar1DomainLowerBound();
-	double division_width_var2 = first->getVar2DomainRange() / divisions_var2;
-	double range_low_var2 = first->getVar2DomainLowerBound();
+  mydouble division_width_var1 = first->getVar1DomainRange() / divisions_var1;
+  mydouble range_low_var1 = first->getVar1DomainLowerBound();
+  mydouble division_width_var2 = first->getVar2DomainRange() / divisions_var2;
+	mydouble range_low_var2 = first->getVar2DomainLowerBound();
 
-	double interval_center[2];
-	double smear_interval_center[2];
+	mydouble interval_center[2];
+	mydouble smear_interval_center[2];
 
 	std::vector<DataStructs::DimensionRange> temp_range_first;
 	DataStructs::DimensionRange dr;
@@ -129,13 +129,13 @@ mydouble SmearingConvolutionModel2D::eval(const double *x) const {
 			/*std::cout << "gaus integral: " << int_second << std::endl;
 			 std::cout << "  dpmmodel integral: " << int_first << std::endl;*/
 
-			double intfirst = first->evaluate(interval_center);
+			mydouble intfirst = first->evaluate(interval_center);
 			if (intfirst != intfirst) {
 				/*std::cout << interval_center[0] << " : " << interval_center[1] << " => "
 				 << intfirst << std::endl;*/
 				intfirst = 0.0;
 			}
-			double intsecond = second->eval(smear_interval_center);
+			mydouble intsecond = second->eval(smear_interval_center);
 			if (intsecond != intsecond) {
 				/*second->getModelParameterSet().printInfo();
 				 std::cout << smear_interval_center[0] << " : "

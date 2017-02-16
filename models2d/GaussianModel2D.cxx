@@ -9,7 +9,7 @@
 
 #include <cmath>
 
-GaussianModel2D::GaussianModel2D(std::string name_, double num_sigmas_) :
+GaussianModel2D::GaussianModel2D(std::string name_, mydouble num_sigmas_) :
     Model2D(name_), num_sigmas(num_sigmas_), gauss_sigma_var1(), gauss_sigma_var2(), gauss_mean_var1(), gauss_mean_var2(), gauss_rho(), gauss_amplitude() {
   initModelParameters();
 }
@@ -33,7 +33,7 @@ void GaussianModel2D::initModelParameters() {
   gauss_amplitude->setParameterFixed(true);
 }
 
-mydouble GaussianModel2D::eval(const double *x) const {
+mydouble GaussianModel2D::eval(const mydouble *x) const {
   // see wikipedia definition
 
   mydouble rho_factor = (1.0 - std::pow(gauss_rho->getValue(), 2));
@@ -55,7 +55,7 @@ mydouble GaussianModel2D::eval(const double *x) const {
 }
 
 void GaussianModel2D::updateDomain() {
-  double temp = num_sigmas * std::abs(gauss_sigma_var1->getValue());
+  mydouble temp = num_sigmas * std::abs(gauss_sigma_var1->getValue());
   setVar1Domain(-temp + gauss_mean_var1->getValue(),
       temp + gauss_mean_var1->getValue());
   temp = num_sigmas * std::abs(gauss_sigma_var2->getValue());

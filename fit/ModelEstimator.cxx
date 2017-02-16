@@ -93,7 +93,7 @@ void ModelEstimator::insertParameters() {
   }
 }
 
-void ModelEstimator::updateFreeModelParameters(const double *new_values) {
+void ModelEstimator::updateFreeModelParameters(const mydouble *new_values) {
   int counter = 0;
   int first(false);
 
@@ -102,10 +102,12 @@ void ModelEstimator::updateFreeModelParameters(const double *new_values) {
   for (std::map<std::pair<std::string, std::string>, shared_ptr<ModelPar>,
       ModelStructs::stringpair_comp>::iterator it = free_parameters.begin();
       it != free_parameters.end(); it++) {
-    it->second->setValue(new_values[counter]);
+    if (it->second->getValue() != new_values[counter])
+      it->second->setValue(new_values[counter]);
     ++counter;
   }
   fit_model->updateModel();
+  fit_model->setParametersUnmodified();
 
   /*if (previous_values.size() == 0) {
    previous_values.resize(free_parameters.size());
@@ -211,8 +213,8 @@ void ModelEstimator::applyEstimatorOptions(
 
           double scale = 1.0;
           double precision = 1e-3;
-          double int_func_real = fit_model->Integral(bin_ranges, precision);
-          double int_func_approx = fit_model->evaluate(
+          mydouble int_func_real = fit_model->Integral(bin_ranges, precision);
+          mydouble int_func_approx = fit_model->evaluate(
               data_point->bin_center_value);
           for (unsigned int dim = 0; dim < data->getDimension(); dim++) {
             int_func_approx *= (bin_ranges[dim].range_high
@@ -239,38 +241,39 @@ void ModelEstimator::applyEstimatorOptions(
   }
 }
 
-void ModelEstimator::setInitialEstimatorValue(double initial_estimator_value_) {
+void ModelEstimator::setInitialEstimatorValue(
+    mydouble initial_estimator_value_) {
   initial_estimator_value = initial_estimator_value_;
 }
 
-double ModelEstimator::getLastEstimatorValue() const {
+mydouble ModelEstimator::getLastEstimatorValue() const {
   return last_estimator_value;
 }
 
-double ModelEstimator::evaluate(const double *par) {
+mydouble ModelEstimator::evaluate(const mydouble *par) {
   /* This point is crucial: because this method is called for every iteration
    * of the fitter, the "newly changed" parameters have to be updated in the
    * model so that the changes are actually registered.
    */
   updateFreeModelParameters(par);
 
-  double estimator_value = 0.0;
+  mydouble estimator_value = 0.0;
 
   if (nthreads > 1) {
     // create threads and let them evaluate a part of the data
     boost::thread_group threads;
 
-    std::vector<boost::unique_future<double> > futures;
-    std::vector<boost::packaged_task<double>*> pts;
+    std::vector<boost::unique_future<mydouble> > futures;
+    std::vector<boost::packaged_task<mydouble>*> pts;
 
     for (unsigned int i = 0; i < nthreads; i++) {
       pts.push_back(
-          new boost::packaged_task<double>(
+          new boost::packaged_task<mydouble>(
               boost::bind(&ModelEstimator::eval, this, chopped_data[i])));
       futures.push_back(pts[i]->get_future());
 
       threads.create_thread(
-          boost::bind(&boost::packaged_task<double>::operator(), pts[i]));
+          boost::bind(&boost::packaged_task < mydouble > ::operator(), pts[i]));
     }
 
     threads.join_all();
@@ -307,22 +310,27 @@ double ModelEstimator::evaluate(const double *par) {
   else {
     estimator_value = eval(data);
   }
-  std::cout<<"initial estimator value: "<<initial_estimator_value<<std::endl;
+  std::cout << "initial estimator value: " << initial_estimator_value
+      << std::endl;
   estimator_value -= initial_estimator_value;
 
-  std::cout<<"estimator change:\n";
-  std::cout<<"current estimator value: "<<estimator_value<<std::endl;
-  std::cout<<"previous estimator value: "<<last_estimator_value<<std::endl;
-  std::cout<<"rel diff: "<<std::abs((estimator_value-last_estimator_value)/estimator_value)<<std::endl;
+  std::cout << "estimator change:\n";
+  std::cout << "current estimator value: " << estimator_value << std::endl;
+  std::cout << "previous estimator value: " << last_estimator_value
+      << std::endl;
+  std::cout << "rel diff: "
+      << std::abs((estimator_value - last_estimator_value) / estimator_value)
+      << std::endl;
 
-  std::cout<<"parameters:\n";
+  std::cout << "parameters:\n";
   unsigned int counter(0);
   for (std::map<std::pair<std::string, std::string>, shared_ptr<ModelPar>,
       ModelStructs::stringpair_comp>::iterator it = free_parameters.begin();
       it != free_parameters.end(); it++) {
-    std::cout<<it->first.first<<":"<<it->first.second<<": "<<par[counter]<<std::endl;
+    std::cout << it->first.first << ":" << it->first.second << ": "
+        << par[counter] << std::endl;
     ++counter;
-  } 
+  }
 
   last_estimator_value = estimator_value;
   return estimator_value;

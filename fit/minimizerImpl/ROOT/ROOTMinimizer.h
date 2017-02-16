@@ -19,6 +19,8 @@ private:
 
 	int minimize();
 
+  double root_func_wrapper(const double *x);
+
 public:
 	ROOTMinimizer();
 	virtual ~ROOTMinimizer();

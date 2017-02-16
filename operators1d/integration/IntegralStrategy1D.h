@@ -8,6 +8,8 @@
 #ifndef INTEGRALSTRATEGY1D_H_
 #define INTEGRALSTRATEGY1D_H_
 
+#include "ProjectWideSettings.h"
+
 class Model1D;
 
 class IntegralStrategy1D {
@@ -15,8 +17,8 @@ public:
 	IntegralStrategy1D();
 	virtual ~IntegralStrategy1D();
 
-	virtual double Integral(Model1D *model1d, double xlow, double xhigh,
-			double precision) =0;
+	virtual mydouble Integral(Model1D *model1d, mydouble xlow, mydouble xhigh,
+			mydouble precision) =0;
 };
 
 #endif /* INTEGRALSTRATEGY1D_H_ */

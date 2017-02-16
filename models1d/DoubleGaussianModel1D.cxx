@@ -82,7 +82,7 @@ void DoubleGaussianModel1D::initModelParameters() {
 	gauss_amplitude->setParameterFixed(true);
 }
 
-mydouble DoubleGaussianModel1D::eval(const double *x) const {
+mydouble DoubleGaussianModel1D::eval(const mydouble *x) const {
 	// double gauss smearing function
 	return gauss_amplitude->getValue() * gauss_ratio_narrow_wide->getValue()
 			/ (gauss_ratio_narrow_wide->getValue() + 1.0)
@@ -100,7 +100,7 @@ mydouble DoubleGaussianModel1D::eval(const double *x) const {
 }
 
 void DoubleGaussianModel1D::updateDomain() {
-	double temp = num_sigmas * gauss_sigma_narrow->getValue()/gauss_sigma_ratio_narrow_wide->getValue();
+  mydouble temp = num_sigmas * gauss_sigma_narrow->getValue()/gauss_sigma_ratio_narrow_wide->getValue();
 	setDomain(-temp + gauss_mean_wide->getValue(),
 			temp + gauss_mean_wide->getValue());
 }

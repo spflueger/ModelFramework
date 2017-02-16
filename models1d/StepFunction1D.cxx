@@ -18,7 +18,7 @@ StepFunction1D::~StepFunction1D() {
 	// TODO Auto-generated destructor stub
 }
 
-mydouble StepFunction1D::eval(const double *x) const {
+mydouble StepFunction1D::eval(const mydouble *x) const {
 	if (falling_edge) {
 		if (x[0] < edge->getValue())
 			return amplitude->getValue();
@@ -38,7 +38,7 @@ void StepFunction1D::initModelParameters() {
 
 void StepFunction1D::updateDomain() {
 	if (falling_edge)
-		setDomain(std::numeric_limits<double>::min(), edge->getValue());
+		setDomain(std::numeric_limits<mydouble>::min(), edge->getValue());
 	else
-		setDomain(edge->getValue(), std::numeric_limits<double>::max());
+		setDomain(edge->getValue(), std::numeric_limits<mydouble>::max());
 }

@@ -19,11 +19,11 @@ public:
 
 	void initModelParameters();
 
-	mydouble eval(const double *x) const;
+	mydouble eval(const mydouble *x) const;
 
 	void updateDomain();
 
-	virtual std::pair<double, double> getUncertaincy(const double *x) const;
+	virtual std::pair<mydouble, mydouble> getUncertaincy(const mydouble *x) const;
 };
 
 #endif /* PRODUCTMODEL2D_H_ */

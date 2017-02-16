@@ -19,14 +19,15 @@ private:
 
   static double gsl_func_wrapper(double x, void *p) {
   	Model1D *current_model_temp = current_model;
-  	double value = current_model->eval(&x);
+  	mydouble xtemp = (mydouble)x;
+  	mydouble value = current_model->eval(&xtemp);
   	current_model = current_model_temp;
-    return value;
+    return (double)value;
   }
 public:
 	IntegralStrategyGSL1D();
 	virtual ~IntegralStrategyGSL1D();
 
-  double Integral(Model1D *model1d, double xlow, double xhigh, double precision);
+  mydouble Integral(Model1D *model1d, mydouble xlow, mydouble xhigh, mydouble precision);
 };
 #endif /* INTEGRALSTRATEGYGSL1D_H_ */

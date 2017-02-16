@@ -31,10 +31,10 @@ void ROOTDataHelper::fillBinnedData(shared_ptr<Data> data,
 		shared_ptr<DataStructs::binned_data_point> datapoint(
 				new DataStructs::binned_data_point());
 
-		datapoint->bin_center_value[0] = hist_1d->GetBinCenter(i);
-		datapoint->bin_widths[0] = hist_1d->GetBinWidth(i);
-		datapoint->z = hist_1d->GetBinContent(i);
-		datapoint->z_error = hist_1d->GetBinError(i);
+		datapoint->bin_center_value[0] = (mydouble)hist_1d->GetBinCenter(i);
+		datapoint->bin_widths[0] = (mydouble)hist_1d->GetBinWidth(i);
+		datapoint->z = (mydouble)hist_1d->GetBinContent(i);
+		datapoint->z_error = (mydouble)hist_1d->GetBinError(i);
 
 		//if (datapoint->z == 0.0)
 		//	continue;
@@ -55,12 +55,12 @@ void ROOTDataHelper::fillBinnedData(shared_ptr<Data> data,
 				shared_ptr<DataStructs::binned_data_point> datapoint(
 						new DataStructs::binned_data_point());
 
-				datapoint->bin_center_value[0] = hist_2d->GetXaxis()->GetBinCenter(ix);
-				datapoint->bin_widths[0] = hist_2d->GetXaxis()->GetBinWidth(ix);
-				datapoint->bin_center_value[1] = hist_2d->GetYaxis()->GetBinCenter(iy);
-				datapoint->bin_widths[1] = hist_2d->GetYaxis()->GetBinWidth(iy);
-				datapoint->z = hist_2d->GetBinContent(ix, iy);
-				datapoint->z_error = hist_2d->GetBinError(ix, iy);
+				datapoint->bin_center_value[0] = (mydouble)hist_2d->GetXaxis()->GetBinCenter(ix);
+				datapoint->bin_widths[0] = (mydouble)hist_2d->GetXaxis()->GetBinWidth(ix);
+				datapoint->bin_center_value[1] = (mydouble)hist_2d->GetYaxis()->GetBinCenter(iy);
+				datapoint->bin_widths[1] = (mydouble)hist_2d->GetYaxis()->GetBinWidth(iy);
+				datapoint->z = (mydouble)hist_2d->GetBinContent(ix, iy);
+				datapoint->z_error = (mydouble)hist_2d->GetBinError(ix, iy);
 
 				//if (datapoint->z == 0.0)
 				//	continue;
@@ -80,9 +80,12 @@ void ROOTDataHelper::fillBinnedData(shared_ptr<Data> data,
 	for (int i = 1; i <= graph_1d->GetN(); i++) {
 		shared_ptr<DataStructs::binned_data_point> datapoint(
 				new DataStructs::binned_data_point());
-		graph_1d->GetPoint(i, datapoint->bin_center_value[0], datapoint->z);
-		datapoint->z_error = graph_1d->GetErrorY(i);
-		datapoint->bin_widths[0] = 1.0;
+		double x,y;
+		graph_1d->GetPoint(i, x, y);
+		datapoint->bin_center_value[0] = (mydouble)x;
+		datapoint->z = (mydouble)y;
+		datapoint->z_error = (mydouble)graph_1d->GetErrorY(i);
+		datapoint->bin_widths[0] = 1.0L;
 
 		if (datapoint->z == 0.0)
 			continue;

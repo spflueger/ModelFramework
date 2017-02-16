@@ -32,7 +32,7 @@ void GaussianModel1D::initModelParameters() {
   gauss_amplitude->setParameterFixed(true);
 }
 
-mydouble GaussianModel1D::eval(const double *x) const {
+mydouble GaussianModel1D::eval(const mydouble *x) const {
   // single gauss smearing function
   /*std::cout << "x = " << x[0] << " -> " << gauss_mean->getValue() << " "
    << gauss_sigma->getValue() << std::endl;*/
@@ -45,6 +45,6 @@ mydouble GaussianModel1D::eval(const double *x) const {
 }
 
 void GaussianModel1D::updateDomain() {
-  double temp = num_sigmas * gauss_sigma->getValue();
+  mydouble temp = num_sigmas * gauss_sigma->getValue();
   setDomain(-temp + gauss_mean->getValue(), temp + gauss_mean->getValue());
 }

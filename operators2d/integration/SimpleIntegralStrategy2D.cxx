@@ -32,7 +32,7 @@ unsigned int SimpleIntegralStrategy2D::determineOptimalCallNumber(Model2D *model
     const std::vector<DataStructs::DimensionRange> &ranges, double precision) {
   used_grid_constant = 1;
 
-  double result, result_higher;
+  mydouble result, result_higher;
   do {
     result = Integral(model2d, ranges, precision);
     used_grid_constant *= 2;
@@ -47,15 +47,16 @@ unsigned int SimpleIntegralStrategy2D::determineOptimalCallNumber(Model2D *model
 mydouble SimpleIntegralStrategy2D::Integral(Model2D *model2d,
     const std::vector<DataStructs::DimensionRange> &ranges, mydouble precision) {
   mydouble result = 0.0;
-  double x[2];
+  mydouble x[2];
 
-  double wx = (ranges[0].range_high - ranges[0].range_low) / used_grid_constant;
-  double wy = (ranges[1].range_high - ranges[1].range_low) / used_grid_constant;
+  mydouble wx = (ranges[0].range_high - ranges[0].range_low) / used_grid_constant;
+  mydouble wy = (ranges[1].range_high - ranges[1].range_low) / used_grid_constant;
 
+  mydouble half(0.5);
   for (unsigned int ix = 0; ix < used_grid_constant; ++ix) {
     for (unsigned int iy = 0; iy < used_grid_constant; ++iy) {
-      x[0] = ranges[0].range_low + wx * (0.5 + ix);
-      x[1] = ranges[1].range_low + wy * (0.5 + iy);
+      x[0] = ranges[0].range_low + wx * (half + ix);
+      x[1] = ranges[1].range_low + wy * (half + iy);
       mydouble tempresult = model2d->evaluate(x);
       result += tempresult;
     }

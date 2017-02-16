@@ -5,14 +5,14 @@
 
 class DataModel2D: public Model2D {
 private:
-	double grid_spacing[2];
+	mydouble grid_spacing[2];
 	unsigned int cell_count[2];
-	double *data;
+	mydouble *data;
 
-	double domain_low[2];
-	double domain_high[2];
+	mydouble domain_low[2];
+	mydouble domain_high[2];
 
-	double grid_density;
+	mydouble grid_density;
 
 	ModelStructs::InterpolationType intpol_type;
 
@@ -20,26 +20,26 @@ private:
 	shared_ptr<ModelPar> offset_y;
 
 	// function pointer used to switch between different algorithms for interpolation
-	typedef double (DataModel2D::*function)(const double *x) const;
+	typedef mydouble (DataModel2D::*function)(const mydouble *x) const;
 
 	function model_func;
 
-	std::pair<double, bool> getCellSpacing(
-			const std::set<double> &values);
+	std::pair<mydouble, bool> getCellSpacing(
+			const std::set<mydouble> &values);
 public:
 	DataModel2D(std::string name_, ModelStructs::InterpolationType type = ModelStructs::LINEAR);
 	DataModel2D(const DataModel2D &data_model_);
 	virtual ~DataModel2D();
 
-	void setData(const std::map<std::pair<double, double>, double> &data_);
+	void setData(const std::map<std::pair<mydouble, mydouble>, mydouble> &data_);
 
 	void setIntpolType(
 			ModelStructs::InterpolationType intpol_type_);
 
-	double evaluateConstant(const double *x) const;
-	double evaluateLinear(const double *x) const;
+	mydouble evaluateConstant(const mydouble *x) const;
+	mydouble evaluateLinear(const mydouble *x) const;
 
-	mydouble eval(const double *x) const;
+	mydouble eval(const mydouble *x) const;
 
 	void initModelParameters();
 

@@ -12,14 +12,14 @@ ModelPar::ModelPar() :
 				false), set(false), locked(false), bounded(false), connections() {
 }
 
-ModelPar::ModelPar(std::string name_, double value_, bool fixed_) :
+ModelPar::ModelPar(std::string name_, mydouble value_, bool fixed_) :
 		name(name_), value(value_), lower_bound(0.0), upper_bound(0.0), fixed(
 				fixed_), superior(false), set(false), locked(true),
 		// variable is immediately locked which sounds strange
 		// but it can be set once because it is not set yet
 		// the lock should not be fiddled with and is automatically
 		// opened within the registerUpdater method of #ModelParameterHandler
-		bounded(false), connections() {
+		bounded(false), modified(true), connections() {
 }
 
 const std::string& ModelPar::getName() const {
@@ -38,13 +38,13 @@ void ModelPar::setParameterFixed(bool fixed_) {
 	fixed = fixed_;
 }
 
-void ModelPar::setParameterBounds(double lower_bound_, double upper_bound_) {
+void ModelPar::setParameterBounds(mydouble lower_bound_, mydouble upper_bound_) {
 	lower_bound = lower_bound_;
 	upper_bound = upper_bound_;
 	bounded = true;
 }
 
-void ModelPar::setValue(double value_) {
+void ModelPar::setValue(mydouble value_) {
 	// there are some requirements to allow the setting of the parameter
 	// if it wasn't set at all before...
 	if (!set) {
@@ -57,11 +57,12 @@ void ModelPar::setValue(double value_) {
 		// and that connection partner has changed
 		if (!locked || !fixed) {
 			value = value_;
+			modified = true;
 		}
 	}
 }
 
-const double& ModelPar::getValue() const {
+const mydouble& ModelPar::getValue() const {
 	return value;
 }
 
@@ -77,9 +78,16 @@ bool ModelPar::isConnected() const {
 bool ModelPar::isSuperior() const {
 	return superior;
 }
+bool ModelPar::isModified() const {
+  return modified;
+}
 
 void ModelPar::setSuperior(bool superior_) {
 	superior = superior_;
+}
+
+void ModelPar::setModified(bool modified_) {
+  modified = modified_;
 }
 
 void ModelPar::setConnectionTo(const shared_ptr<ModelPar> &model_par) {

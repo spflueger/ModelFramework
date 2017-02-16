@@ -12,7 +12,7 @@
 
 class GaussianModel1D: public Model1D {
 private:
-	double num_sigmas;
+  mydouble num_sigmas;
 	shared_ptr<ModelPar> gauss_sigma;
 	shared_ptr<ModelPar> gauss_mean;
 	shared_ptr<ModelPar> gauss_amplitude;
@@ -35,7 +35,7 @@ public:
 	 * @returns value of the response function at the specified theta value with
 	 * the given theta sigma
 	 */
-	mydouble eval(const double *x) const;
+	mydouble eval(const mydouble *x) const;
 
 	void updateDomain();
 };

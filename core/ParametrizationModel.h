@@ -9,6 +9,7 @@
 #define PARAMETRIZATIONMODEL_H_
 
 #include "SharedPtr.h"
+#include "ProjectWideSettings.h"
 
 class Model;
 class ModelPar;
@@ -29,7 +30,7 @@ public:
   ParametrizationModel(shared_ptr<Model> model_);
   virtual ~ParametrizationModel();
 
-  void parametrize(const double *x);
+  void parametrize(const mydouble *x);
 
   void setModelPar(shared_ptr<ModelPar> model_par_);
   const shared_ptr<ModelPar> getModelPar() const;

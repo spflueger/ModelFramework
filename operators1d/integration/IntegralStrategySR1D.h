@@ -15,7 +15,7 @@ public:
 	IntegralStrategySR1D();
 	virtual ~IntegralStrategySR1D();
 
-	double Integral(Model1D *model1d, double xlow, double xhigh, double precision);
+	mydouble Integral(Model1D *model1d, mydouble xlow, mydouble xhigh, mydouble precision);
 };
 
 #endif /* INTEGRALSTRATEGYSR1D_H_ */

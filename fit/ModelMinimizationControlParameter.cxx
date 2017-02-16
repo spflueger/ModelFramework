@@ -15,6 +15,6 @@ ModelMinimizationControlParameter::~ModelMinimizationControlParameter() {
 	// TODO Auto-generated destructor stub
 }
 
-double ModelMinimizationControlParameter::evaluate(const double *pars) {
+mydouble ModelMinimizationControlParameter::evaluate(const mydouble *pars) {
 	return model->eval(pars);
 }
