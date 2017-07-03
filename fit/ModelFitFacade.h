@@ -38,6 +38,10 @@ public:
 	void setModel(shared_ptr<Model> model_);
 
 	Data scanEstimatorSpace(const std::vector<std::string>& variable_names);
+
+	std::vector<mydouble> findGoodStartParameters(
+	    const std::vector<std::string>& variable_names, const std::vector<double>& search_factors);
+
 	ModelFitResult Fit();
 
 };

@@ -4,7 +4,7 @@
 
 #include <cmath>
 
-LogLikelihoodEstimator::LogLikelihoodEstimator() {
+LogLikelihoodEstimator::LogLikelihoodEstimator() : ModelEstimator(true) {
   // TODO Auto-generated constructor stub
 }
 
@@ -37,7 +37,7 @@ mydouble LogLikelihoodEstimator::eval(shared_ptr<Data> data) {
       //delta = model_value - data_point->z * log(model_value);
       //loglikelihood += delta;
       deltas.push_back(model_value);
-      deltas.push_back(-data_point->z * log(model_value));
+      deltas.push_back(-data_point->z * std::log(model_value));
     }
   }
 

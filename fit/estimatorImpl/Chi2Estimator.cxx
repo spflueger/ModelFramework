@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-Chi2Estimator::Chi2Estimator() {
+Chi2Estimator::Chi2Estimator() : ModelEstimator(false) {
 	// TODO Auto-generated constructor stub
 }
 
@@ -32,9 +32,8 @@ mydouble Chi2Estimator::eval(shared_ptr<Data> data) {
 			data_point = data_points[i].getBinnedDataPoint();
 			delta =
 					(data_point->z
-							- data->getBinningFactor()
-									* fit_model->evaluate(
-											data_point->bin_center_value));
+							- fit_model->evaluate(
+											data_point->bin_center_value)*data->getBinningFactor());
 			mydouble weightsquare(1.0);
 			if(data_point->z_error != 0.0)
 			  weightsquare = data_point->z_error * data_point->z_error;

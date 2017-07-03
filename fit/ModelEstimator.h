@@ -47,6 +47,7 @@ private:
   mydouble last_estimator_value;
   std::vector<mydouble> previous_values;
   mydouble initial_estimator_value;
+  bool allow_initial_normalization;
 
   // list of free parameters
   std::map<std::pair<std::string, std::string>, shared_ptr<ModelPar>,
@@ -71,7 +72,7 @@ protected:
   EstimatorOptions estimator_options;
 
 public:
-  ModelEstimator();
+  ModelEstimator(bool allow_initial_normalization_);
   virtual ~ModelEstimator();
 
   void setNumberOfThreads(unsigned int number_of_threads);

@@ -33,6 +33,8 @@ public:
 	void setControlParameter(
 			shared_ptr<ModelControlParameter> control_parameter_);
 
+	virtual void increaseFunctionCallLimit();
+
 	virtual int minimize() =0;
 
 	int doMinimization();

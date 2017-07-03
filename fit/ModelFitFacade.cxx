@@ -137,13 +137,15 @@ Data ModelFitFacade::scanEstimatorSpace(
   return scan_data;
 }
 
-ModelFitResult ModelFitFacade::Fit() {
-  ModelFitResult fit_result_dummy;
-
+std::vector<mydouble> ModelFitFacade::findGoodStartParameters(
+    const std::vector<std::string>& variable_names,
+    const std::vector<double>& search_factors) {
+  std::vector<mydouble> best_parameters(variable_names.size());
   // check that estimator is set
   if (!estimator) {
-    fit_result_dummy.setFitStatus(-1);
-    return fit_result_dummy;
+    throw std::runtime_error(
+        "ModelFitFacade::findGoodStartParameters: Estimator not set...");
+
   }
 
   // check if data and model have the correct dimensions
@@ -151,7 +153,9 @@ ModelFitResult ModelFitFacade::Fit() {
     std::cout << "The model has a dimension of " << model->getDimension()
         << ", which does not match the data dimension of "
         << data->getDimension() << "!" << std::endl;
-    return fit_result_dummy;
+    throw std::runtime_error(
+        "ModelFitFacade::findGoodStartParameters: dimension missmatch!");
+
   }
 
   // set model
@@ -164,7 +168,117 @@ ModelFitResult ModelFitFacade::Fit() {
       << std::endl;
   estimator->applyEstimatorOptions(estimator_options);
 
-  // check that minimizer exists
+  std::cout << "Finding good start parameters for parameters!\n";
+
+  // find the correct parameters first
+  auto free_params = model->getModelParameterSet().getFreeModelParameters();
+  std::vector<mydouble> params(free_params.size());
+  std::vector<unsigned int> indices(variable_names.size());
+
+  unsigned int counter(0);
+  unsigned int num_counter(0);
+  for (auto param : free_params) {
+    for (unsigned int i = 0; i < variable_names.size(); ++i) {
+      if (param.first.second.compare(variable_names[i]) == 0) {
+        indices[i] = counter;
+        ++num_counter;
+        break;
+      }
+    }
+    params[counter] = param.second->getValue();
+    ++counter;
+  }
+  if (num_counter != variable_names.size())
+    throw std::runtime_error(
+        "ModelFitFacade::findGoodStartParameters: requesting scan for parameters that are not free parameters of the fit!");
+
+  std::vector<std::vector<mydouble> > scan_grid;
+  std::vector<std::vector<mydouble> > temp_set;
+  for (unsigned int i = 0; i < indices.size(); ++i) {
+    if (scan_grid.size() == 0) {
+      std::vector<mydouble> temp_params(params);
+      for (double search_factor : search_factors) {
+        temp_params[indices[i]] = params[indices[i]] / search_factor;
+        temp_set.push_back(temp_params);
+        temp_params[indices[i]] = params[indices[i]] * search_factor;
+        temp_set.push_back(temp_params);
+      }
+      temp_params[indices[i]] = params[indices[i]];
+      temp_set.push_back(temp_params);
+
+    }
+    else {
+      for (auto const& set : scan_grid) {
+        std::vector<mydouble> temp_params(set);
+        for (double search_factor : search_factors) {
+          temp_params[indices[i]] = params[indices[i]] / search_factor;
+          temp_set.push_back(temp_params);
+          temp_params[indices[i]] = params[indices[i]] * search_factor;
+          temp_set.push_back(temp_params);
+        }
+        temp_params[indices[i]] = params[indices[i]];
+        temp_set.push_back(temp_params);
+      }
+    }
+    scan_grid = temp_set;
+    temp_set.clear();
+  }
+
+  std::vector<mydouble> estimator_values;
+
+  std::cout << "scanning " << scan_grid.size() << " points!\n";
+  for (auto const& point : scan_grid) {
+    mydouble temp(estimator->evaluate(&point[0]));
+    estimator_values.push_back(temp);
+  }
+
+  // normalize to mean and find best
+  mydouble mean(0.0);
+  for(mydouble a : estimator_values)
+    mean += a;
+  mean /= estimator_values.size();
+  for(mydouble& a : estimator_values)
+      a=a-mean;
+  unsigned int best_index = std::min_element(estimator_values.begin(), estimator_values.end()) - estimator_values.begin();
+
+  for (unsigned int i = 0; i < indices.size(); ++i)
+    best_parameters[i] = scan_grid[best_index][indices[i]];
+
+  std::cout << "best parameters are: \n";
+  for (unsigned int i = 0; i < indices.size(); ++i) {
+    std::cout << variable_names[i] << ": " << best_parameters[i] << std::endl;
+  }
+  return best_parameters;
+}
+
+ModelFitResult ModelFitFacade::Fit() {
+  ModelFitResult fit_result_dummy;
+
+// check that estimator is set
+  if (!estimator) {
+    fit_result_dummy.setFitStatus(-1);
+    return fit_result_dummy;
+  }
+
+// check if data and model have the correct dimensions
+  if (model->getDimension() != data->getDimension()) {
+    std::cout << "The model has a dimension of " << model->getDimension()
+        << ", which does not match the data dimension of "
+        << data->getDimension() << "!" << std::endl;
+    return fit_result_dummy;
+  }
+
+// set model
+  estimator->setModel(model);
+// set data
+  estimator->setData(data);
+// apply estimator options
+  std::cout
+      << "applying estimator options (in case of integral scaling this can mean integrals are being computed!)..."
+      << std::endl;
+  estimator->applyEstimatorOptions(estimator_options);
+
+// check that minimizer exists
   if (!minimizer) {
     fit_result_dummy.setFitStatus(-2);
     return fit_result_dummy;
@@ -181,8 +295,8 @@ ModelFitResult ModelFitFacade::Fit() {
   }
 
   int fit_status(-1);
-  // this try loop is done to keep normalizing the estimator space to get better numerical stability
-  for (unsigned int trys = 0; trys < 20; ++trys) {
+// this try loop is done to keep normalizing the estimator space to get better numerical stability
+  for (unsigned int trys = 0; trys < 3; ++trys) {
     estimator->setInitialEstimatorValue(estimator->evaluate(&pars[0]));
 
     // call minimization procedure
@@ -199,18 +313,17 @@ ModelFitResult ModelFitFacade::Fit() {
       auto &parameters = minimizer->getControlParameter()->getParameterList();
       for (auto const &param : free_params) {
         parameters[counter].value = param.second->getValue();
-        pars[counter]= param.second->getValue();
+        pars[counter] = param.second->getValue();
         ++counter;
       }
       //reset initial estimator value
       estimator->setInitialEstimatorValue(0.0);
     }
+    //minimizer->increaseFunctionCallLimit();
   }
   if (fit_status) {
-    cout << "ERROR: Problem while performing fit. Returning NULL pointer!"
+    cout << "ERROR: Problem while performing fit. Using last parameters!"
         << endl;
-    fit_result_dummy.setFitStatus(fit_status);
-    return fit_result_dummy;
   }
 
   ModelFitResult fit_result = minimizer->createModelFitResult();

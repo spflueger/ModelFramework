@@ -8,27 +8,31 @@
 #include "ModelMinimizer.h"
 
 ModelMinimizer::ModelMinimizer() :
-		control_parameter() {
+    control_parameter() {
 }
 
 ModelMinimizer::~ModelMinimizer() {
-	// TODO Auto-generated destructor stub
+  // TODO Auto-generated destructor stub
 }
 
 shared_ptr<ModelControlParameter> ModelMinimizer::getControlParameter() const {
-	return control_parameter;
+  return control_parameter;
 }
 
 void ModelMinimizer::setControlParameter(
-		shared_ptr<ModelControlParameter> control_parameter_) {
-	control_parameter = control_parameter_;
+    shared_ptr<ModelControlParameter> control_parameter_) {
+  control_parameter = control_parameter_;
+}
+
+void ModelMinimizer::increaseFunctionCallLimit() {
 }
 
 int ModelMinimizer::doMinimization() {
-	// then apply minimization procedure
-	if (control_parameter->getParameterList().size() > 0) {
-		return minimize();
-	} else {
-		return -1;
-	}
+  // then apply minimization procedure
+  if (control_parameter->getParameterList().size() > 0) {
+    return minimize();
+  }
+  else {
+    return -1;
+  }
 }

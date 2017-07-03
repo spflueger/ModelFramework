@@ -15,9 +15,10 @@
 #include <future>
 #include <functional>
 
-ModelEstimator::ModelEstimator() :
+ModelEstimator::ModelEstimator(bool allow_initial_normalization_) :
     free_parameters(), data(), fit_model(), estimator_options(), mtx(), nthreads(
-        1), initial_estimator_value(0.0) {
+        1), initial_estimator_value(0.0), allow_initial_normalization(
+        allow_initial_normalization_) {
 }
 
 ModelEstimator::~ModelEstimator() {
@@ -310,27 +311,28 @@ mydouble ModelEstimator::evaluate(const mydouble *par) {
   else {
     estimator_value = eval(data);
   }
-  std::cout << "initial estimator value: " << initial_estimator_value
-      << std::endl;
-  estimator_value -= initial_estimator_value;
+  //std::cout << "initial estimator value: " << initial_estimator_value
+  //    << std::endl;
+  if (allow_initial_normalization)
+    estimator_value -= initial_estimator_value;
 
-  std::cout << "estimator change:\n";
-  std::cout << "current estimator value: " << estimator_value << std::endl;
-  std::cout << "previous estimator value: " << last_estimator_value
-      << std::endl;
-  std::cout << "rel diff: "
-      << std::abs((estimator_value - last_estimator_value) / estimator_value)
-      << std::endl;
+  //std::cout << "estimator change:\n";
+  //std::cout << "current estimator value: " << estimator_value << std::endl;
+  //std::cout << "previous estimator value: " << last_estimator_value
+  //    << std::endl;
+  //std::cout << "rel diff: "
+  //    << std::abs((estimator_value - last_estimator_value) / estimator_value)
+  //    << std::endl;
 
-  std::cout << "parameters:\n";
-  unsigned int counter(0);
-  for (std::map<std::pair<std::string, std::string>, shared_ptr<ModelPar>,
-      ModelStructs::stringpair_comp>::iterator it = free_parameters.begin();
-      it != free_parameters.end(); it++) {
-    std::cout << it->first.first << ":" << it->first.second << ": "
-        << par[counter] << std::endl;
-    ++counter;
-  }
+  /*std::cout << "parameters:\n";
+   unsigned int counter(0);
+   for (std::map<std::pair<std::string, std::string>, shared_ptr<ModelPar>,
+   ModelStructs::stringpair_comp>::iterator it = free_parameters.begin();
+   it != free_parameters.end(); it++) {
+   std::cout << it->first.first << ":" << it->first.second << ": "
+   << par[counter] << std::endl;
+   ++counter;
+   }*/
 
   last_estimator_value = estimator_value;
   return estimator_value;

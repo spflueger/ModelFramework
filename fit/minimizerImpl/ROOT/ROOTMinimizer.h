@@ -22,8 +22,10 @@ private:
   double root_func_wrapper(const double *x);
 
 public:
-	ROOTMinimizer();
+	ROOTMinimizer(int type=0);
 	virtual ~ROOTMinimizer();
+
+	void increaseFunctionCallLimit();
 
 	const ROOT::Math::Minimizer* getROOTMinimizer() const;
 
