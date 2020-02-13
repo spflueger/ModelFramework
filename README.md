@@ -1,7 +1,7 @@
 ModelFramework
 ==============
 
-NOTE: Atm its not even compiling because I'm reworking/rewriting large parts of it. 
+**NOTE**: This is an outdated project which is stale and frozen and not subject to any further development. A working version of this framework was integrated into the LuminosityFit framework.
 
 Easy creation of complex models/functions in C++, with interfaces to data and fitting frameworks etc. Why create such a framework while there are so many things out there (Mathematica, Matlab, R, ROOT, etc.)?
 Simple! None of what I found was really suited for my case (I need an open-source and free solution, that is powerful enough to construct rather complex models with easy-to-read/write code.
